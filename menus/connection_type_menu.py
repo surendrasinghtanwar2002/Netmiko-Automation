@@ -1,5 +1,5 @@
 import sys
-sys.path.append('/Users/surendrasingh/Desktop/NETWORKING_AUTOMATION/menus')
+sys.path.append('/Users/surendrasingh/Desktop/Netmiko-Automation/menus')
 from scripts_menu import ScriptMenu
 
 class Connection_Type_Menu:

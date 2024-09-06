@@ -1,7 +1,7 @@
                                                 ## Main Class Definition ##
 ##Importing required Modules
 import sys 
-sys.path.append('/Users/surendrasingh/Desktop/NETWORKING_AUTOMATION/menus')
+sys.path.append('/Users/surendrasingh/Desktop/Netmiko-Automation/menus')
 from connection_type_menu import Connection_Type_Menu
 
 class Main_Menu:

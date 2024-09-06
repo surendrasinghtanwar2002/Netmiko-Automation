@@ -8,7 +8,7 @@ class ScriptMenu:
         self.menu_item = self.menu_items_list()
 
     def menu_items_list(self) -> list:
-        path = "/Users/surendrasingh/Desktop/NETWORKING_AUTOMATION/scripts/cisco_script"
+        path = "/Users/surendrasingh/Desktop/Netmiko-Automation/scripts/cisco_script"
         exclude_items = {"__init__.py", "unwanted_file.py"}
         dir_list = [item.strip(".py") for item in os.listdir(path) if item not in exclude_items]
         print(f"Menu items: {dir_list}")  # debugging statement
@@ -35,7 +35,7 @@ class ScriptMenu:
         return action
 
     def import_module(self, script_name):
-        path = "/Users/surendrasingh/Desktop/NETWORKING_AUTOMATION/scripts/cisco_script"
+        path = "/Users/surendrasingh/Desktop/Netmiko-Automation/scripts/cisco_script"
         module_path = os.path.join(path, f"{script_name}.py")
 
         if not os.path.isfile(module_path):
