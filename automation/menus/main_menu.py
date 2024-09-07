@@ -22,28 +22,28 @@ class MainMenu:
 
     # Define specific functions for each selection
     def handle_cisco(self)->None:
-        print("Handling Cisco script execution.")
+        print("Handling Cisco script execution.")   ##Debug
         self.connection_menu.connection_display_menu()
         return True
 
     def handle_juniper(self)->None:
-        print("Handling Juniper script execution.")
+        print("Handling Juniper script execution.")     ##Debug
         self.connection_menu.connection_display_menu()
         return True
 
     def handle_arista(self)->None:
-        print("Handling Arista script execution.")
+        print("Handling Arista script execution.")      ##Debug
         self.connection_menu.connection_display_menu()
         return True
 
     def handle_dell(self)->None:
-        print("Handling Dell script execution.")
+        print("Handling Dell script execution.")        ##Debug
         self.connection_menu.connection_display_menu()
         return True
 
     # Default action if selection is not found (optional)
     def default_action(self)->None:
-        print("Invalid selection, please try again.")
+        print("Invalid selection, please try again.")   ##Debug
         return True
 
     # Display Menu  

@@ -7,7 +7,11 @@ class Text_File:
     ##common text
     common_text ={
         "connection": "Connected to the host succesfully",
-        "connected_host":"Connected to host "
+        "connected_host":"Connected to host ",
+        "username":"Enter your Username:-",
+        "password":"Enter your Password:-",
+        "valid_cred":"Your credentails are in valid order",
+        "host_ip_prompt":"Enter your HOST IP ADDRESS"
     }
     ##common text
     exception_text ={
@@ -16,7 +20,8 @@ class Text_File:
     }
     ##error text
     error_text = {
-        "device_details_error":"!!! You have provided wrong details of the device !!!".center(shutil.get_terminal_size().columns)
+        "device_details_error":"!!! You have provided wrong details of the device !!!".center(shutil.get_terminal_size().columns),
+        "limit_exceed":"You have reached your limit"
     }
     ##debug text
     debug_text = {
