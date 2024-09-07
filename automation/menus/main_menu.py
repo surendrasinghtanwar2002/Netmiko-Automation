@@ -4,7 +4,7 @@ import importlib.util
 from automation.menus.menu_utils import MenuUtils
 from automation.device_connection.device_connection import Device_Connection
 from assets.text_file import Text_File
-
+from automation.authentication.authentication import single_device_auth,multiple_device_auth
 
 ## Main Menu Class
 class MainMenu:
@@ -122,14 +122,19 @@ class ConnectionTypeMenu:
         self.menu_items = ["Single Device Connection", "Multiple Device Connection", "Back to Main Menu"]
 
     def single_device_connection(self):
-        result = Device_Connection.single_device_connection()
-        if result:
+        username, userpass, hostipaddress = single_device_auth()
+        print(f"------> {username} <-------")
+        print(f"------> {userpass} <-------")
+        print(f"------> {hostipaddress} <-------")
+        result = Device_Connection(username,userpass,hostipaddress)
+        if result.single_device_connection():
             self.procedure.script_display_menu()
         else:
             print(Text_File.error_text["device_details_error"])
         return True
 
     def multiple_device_connection(self):
+
         result = Device_Connection.multipl_device_connection()
         if result:
             self.procedure.script_display_menu()    

@@ -4,7 +4,7 @@ import shutil
 from assets.text_file import Text_File
 
 class Device_Connection:
-    def __init__(self,HOST_IP_ADDRESS,USERNAME,PASSWORD,PORTNO=22) -> None:
+    def __init__(self,USERNAME,PASSWORD,HOST_IP_ADDRESS,PORTNO=22) -> None:
         self.HOSTIPADDDRESS = HOST_IP_ADDRESS
         self. USERNAME = USERNAME
         self.PASSWORD = PASSWORD
@@ -16,7 +16,7 @@ class Device_Connection:
             device_details = {
                 "device_type":"cisco_ios",
                 "host":self.HOSTIPADDDRESS,
-                "username":self.USERNAME,
+                "username":self. USERNAME,
                 "password":self.PASSWORD,
                 "port":self.PORTNO
             }
@@ -48,7 +48,7 @@ class Device_Connection:
         try:
             for HOSTIP in self.HOSTIPADDDRESS:
                 result = self.__device_details(HOSTIP,self.USERNAME,self.PASSWORD)
-                if type(result) == dict:
+                if isinstance(result,dict):
                     print(f"{Text_File.debug_text["device_details"]}".center(shutil.get_terminal_size().columns),"*")
                     print(f"{Text_File.common_text["connected_host"]}{result["host"]}".center(shutil.get_terminal_size().columns,"*"))
                     netmiko_connection = ConnectHandler(**result)

@@ -11,7 +11,7 @@ class Text_File:
         "username":"Enter your Username:-",
         "password":"Enter your Password:-",
         "valid_cred":"Your credentails are in valid order",
-        "host_ip_prompt":"Enter your HOST IP ADDRESS",
+        "host_ip_prompt":"Enter your HOST IP ADDRESS:-",
         "mutli_auth_welcome":" Welcome to Multi Device Connection Authentication Page ".center(shutil.get_terminal_size().columns,"!"),
         "same_credentials":"Do you have same credentaisl for all device (Yes/No):-",
         "range_of_ip":"Specify number of device IP Address Range:-",
