@@ -1,2 +1,2 @@
 from assets.text_file import Text_File
-from automation.authentication.authentication import single_device_auth,multiple_device_auth
+from automation.authentication.authentication import single_device_auth,multiple_device_auth,clear

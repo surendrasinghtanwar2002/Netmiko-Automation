@@ -1,10 +1,21 @@
 from maskpass import askpass
 from assets.text_file import Text_File
 import shutil
+import os
+import platform
 
+
+##clear screen function
+def clear()->None:
+    if platform.system() == 'Windows':
+        os.system('cls')
+    else:
+        os.system('clear')
+        
 ##single_device_connection_auth
 def single_device_auth():
     try:
+        clear()
         counter_start = 0
         counter_end= 3
         while counter_start < counter_end:
@@ -36,6 +47,7 @@ def single_device_auth():
 def multiple_device_auth()->tuple[str,str,list]:
     print(Text_File.common_text["mutli_auth_welcome"])
     try:
+        clear()
         user_pass_confirm = input("same_credentials").strip().lower() or "yes"
         if user_pass_confirm == "yes":
             my_ip_address_list = []             ##IP ADDRESS LIST
