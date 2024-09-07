@@ -62,7 +62,7 @@ class ScriptMenu:
 
     def menu_items_list(self) -> list:
         path = "/Users/surendrasingh/Desktop/Netmiko-Automation/automation/scripts/cisco_script"
-        exclude_items = {"__init__.py", "unwanted_file.py"}
+        exclude_items = {"__init__.py", "unwanted_file.py", "__pycache__"}
         dir_list = [item.strip(".py") for item in os.listdir(path) if item not in exclude_items]
         print(f"Menu items: {dir_list}")  # Debugging statement
         return dir_list
@@ -122,9 +122,9 @@ class ConnectionTypeMenu:
 
     def single_device_connection(self):
         username, userpass, hostipaddress = single_device_auth()
-        print(f"------> {username} <-------")
-        print(f"------> {userpass} <-------")
-        print(f"------> {hostipaddress} <-------")
+        # print(f"------> {username} <-------")
+        # print(f"------> {userpass} <-------")                     ##Only used for debuggin area only
+        # print(f"------> {hostipaddress} <-------")
         try:
             result = Device_Connection(username,userpass,hostipaddress)
             if result.single_device_connection():
