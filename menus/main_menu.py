@@ -1,12 +1,13 @@
-                                                ## Main Class Definition ##
-##Importing required Modules
-import sys 
-sys.path.append('/Users/surendrasingh/Desktop/Netmiko-Automation/menus')
-from connection_type_menu import Connection_Type_Menu
+## Importing required Modules
+import os
+import importlib.util
+from menus.menu_utils import MenuUtils
 
-class Main_Menu:
-    def __init__(self) -> None:
-        self.connection_menu = Connection_Type_Menu(self)
+## Main Menu Class
+class MainMenu:
+    def __init__(self, menu_utils: MenuUtils, connection_menu: 'ConnectionTypeMenu') -> None:
+        self.menu_utils = menu_utils
+        self.connection_menu = connection_menu
         self.script_action = {
             "1": self.handle_cisco,
             "2": self.handle_juniper,
@@ -14,42 +15,138 @@ class Main_Menu:
             "4": self.handle_dell,
             "5": self.default_action
         }
-        self.menu_item = ["Cisco", "Juniper", "Arista", "Dell"]
+        self.menu_items = ["Cisco", "Juniper", "Arista", "Dell"]
 
     # Define specific functions for each selection
-    def handle_cisco(self):
+    def handle_cisco(self)->None:
         print("Handling Cisco script execution.")
         self.connection_menu.connection_display_menu()
         return True
 
-    def handle_juniper(self):
+    def handle_juniper(self)->None:
         print("Handling Juniper script execution.")
         self.connection_menu.connection_display_menu()
         return True
 
-    def handle_arista(self):
+    def handle_arista(self)->None:
         print("Handling Arista script execution.")
         self.connection_menu.connection_display_menu()
         return True
 
-    def handle_dell(self):
+    def handle_dell(self)->None:
         print("Handling Dell script execution.")
         self.connection_menu.connection_display_menu()
+        return True
 
     # Default action if selection is not found (optional)
-    def default_action(self):
+    def default_action(self)->None:
         print("Invalid selection, please try again.")
         return True
 
-    # Display Menu
-    def main_menu_display(self):
+    # Display Menu  
+    def display(self)->None:
         while True:
-            from menu_utils import display_menu, get_user_choice
-            display_menu(self.menu_item)    ##priting the display
-            user_choice = get_user_choice(self.script_action)
-            if self.script_action[user_choice]():
+            self.menu_utils.display_menu(self.menu_items)
+            choice = self.menu_utils.get_user_choice(self.script_action)
+            if self.script_action.get(choice)():
                 break
 
+## Script Menu Class
+class ScriptMenu:
+    def __init__(self, menu_utils) -> None:
+        self.menu_utils = menu_utils
+        self.script_action = self.load_script_actions()
+        self.menu_items = self.menu_items_list()
+
+    def menu_items_list(self) -> list:
+        path = "/Users/surendrasingh/Desktop/Netmiko-Automation/scripts/cisco_script"
+        exclude_items = {"__init__.py", "unwanted_file.py"}
+        dir_list = [item.strip(".py") for item in os.listdir(path) if item not in exclude_items]
+        print(f"Menu items: {dir_list}")  # Debugging statement
+        return dir_list
+
+    def load_script_actions(self):
+        menu_items = self.menu_items_list()
+        items_sequence = len(menu_items)
+        print(f"Menu items for actions: {menu_items}")  # Debugging statement
+        return {str(i + 1): self.create_script_action(menu_items[i]) for i in range(items_sequence)}
+
+    def create_script_action(self, script_name):
+        def action():
+            module = self.import_module(script_name)
+            if module:
+                func = getattr(module, 'main', None)
+                if func and callable(func):
+                    func()
+                    return True
+                else:
+                    print(f"Function `main` not found in {script_name}")
+            return False
+        return action
+
+    def import_module(self, script_name):           ##Need to work on this area
+        path = "/Users/surendrasingh/Desktop/Netmiko-Automation/scripts/cisco_script"
+        module_path = os.path.join(path, f"{script_name}.py")
+        if not os.path.isfile(module_path):
+            print(f"Module {script_name} does not exist.")
+            return None
+        spec = importlib.util.spec_from_file_location(script_name, module_path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+
+    ##Displaying menu
+    def script_display_menu(self):
+        while True:
+            self.menu_utils.display_menu(self.menu_items)
+            user_choice = self.menu_utils.get_user_choice(self.script_action)
+            action = self.script_action.get(user_choice)
+            if action and action():
+                break
+
+## Connection Type Class
+class ConnectionTypeMenu:
+    def __init__(self, main_menu_instance: MainMenu, script: ScriptMenu, menu_utils: MenuUtils) -> None:
+        self.main_menu_instance = main_menu_instance
+        self.procedure = script
+        self.menu_utils = menu_utils
+        self.script_action = {
+            "1": self.single_device_connection,
+            "2": self.multiple_device_connection,
+            "3": self.back_to_main_menu,
+            "4": self.default_action
+        }
+        self.menu_items = ["Single Device Connection", "Multiple Device Connection", "Back to Main Menu"]
+
+    def single_device_connection(self):
+        self.procedure.script_display_menu()
+        return True
+
+    def multiple_device_connection(self):
+        self.procedure.script_display_menu()
+        return True
+
+    def back_to_main_menu(self):
+        self.main_menu_instance.display()  # Call to MainMenu.display()
+        return False
+
+    def default_action(self):
+        return False
+
+    def connection_display_menu(self):
+        while True:
+            self.menu_utils.display_menu(self.menu_items)
+            user_choice = self.menu_utils.get_user_choice(self.script_action)
+            if self.script_action.get(user_choice)():
+                break
+
+# Example Usage
 if __name__ == "__main__":
-    main_menu = Main_Menu()  # Creates an instance of Main_Menu
-    main_menu.display_menu()
+    menu_utils = MenuUtils()  
+    script_menu = ScriptMenu(menu_utils=menu_utils)  
+    main_menu = MainMenu(menu_utils=menu_utils, connection_menu=None)  
+    connection_menu = ConnectionTypeMenu(main_menu_instance=main_menu, script=script_menu, menu_utils=menu_utils)
+
+    main_menu.connection_menu = connection_menu
+
+    main_menu.display()
