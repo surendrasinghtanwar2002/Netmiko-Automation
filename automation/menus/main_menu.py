@@ -87,7 +87,7 @@ class ScriptMenu:
         return action
 
     def import_module(self, script_name):           ##Need to work on this area
-        path = "/Users/surendrasingh/Desktop/Netmiko-Automation/scripts/cisco_script"
+        path = "/Users/surendrasingh/Desktop/Netmiko-Automation/scripts/cisco_script"               ##Area need some work where problem need to be resolved
         module_path = os.path.join(path, f"{script_name}.py")
         if not os.path.isfile(module_path):
             print(f"Module {script_name} does not exist.")
@@ -126,8 +126,8 @@ class ConnectionTypeMenu:
         # print(f"------> {userpass} <-------")                     ##Only used for debuggin area only
         # print(f"------> {hostipaddress} <-------")
         try:
-            result = Device_Connection(username,userpass,hostipaddress)
-            if result.single_device_connection():
+            connection= Device_Connection(username,userpass,hostipaddress)
+            if connection.single_device_connection():
                 self.procedure.script_display_menu()
             else:
                 print(Text_File.error_text["device_details_error"])
@@ -140,9 +140,9 @@ class ConnectionTypeMenu:
             print(f"{Text_File.exception_text["common_function_exception"]}")
 
     def multiple_device_connection(self):
-
-        result = Device_Connection.multipl_device_connection()
-        if result:
+        username,userpass,hostipaddress = multiple_device_auth()
+        connection = Device_Connection(username,userpass,hostipaddress)
+        if connection.multipl_device_connection():
             self.procedure.script_display_menu()    
         else:
             print(Text_File.error_text["device_details_error"])

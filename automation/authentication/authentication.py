@@ -11,7 +11,7 @@ def clear()->None:
         os.system('cls')
     else:
         os.system('clear')
-        
+
 ##single_device_connection_auth
 def single_device_auth():
     try:
@@ -48,30 +48,28 @@ def multiple_device_auth()->tuple[str,str,list]:
     print(Text_File.common_text["mutli_auth_welcome"])
     try:
         clear()
-        user_pass_confirm = input("same_credentials").strip().lower() or "yes"
+        user_pass_confirm = input(Text_File.common_text["same_credentials"]).strip().lower() or "yes"
+        print(f"-------> {user_pass_confirm} <------------ Degubiggin this code")
         if user_pass_confirm == "yes":
+            starting_range = 1              ##Counter value for loop statement
             my_ip_address_list = []             ##IP ADDRESS LIST
             user_name = input(Text_File.common_text["username"])
-            user_pass = askpass(Text_File.common_text["password"])
-            try:
-                user_ip_choice = int(Text_File.common_text["range_of_ip"])
-                starting_range = 1
-                while starting_range < user_ip_choice:
-                    ip_address = input(f"{Text_File.common_text["ip_address_range"]}:{starting_range}")
-                    my_ip_address_list.append(ip_address)
-                return user_name,user_pass,my_ip_address_list           ##Return the value after the completion
+            user_pass = askpass(Text_File.common_text["password"])            
+            user_ip_choice = int(input((Text_File.common_text["range_of_ip"])))
+            while starting_range < user_ip_choice+1:
+                ip_address = input(f"{Text_File.common_text["ip_address_range"]} ({starting_range}):-")
+                my_ip_address_list.append(ip_address)
+                starting_range+=1           ##Counter value will increase here
+                
+            return user_name,user_pass,my_ip_address_list           ##Return the value after the completion
             
-            except ValueError as value:
-                print(f"{Text_File.exception_text["value_error"]} {value}")
-                return None
-
     except ValueError as value:
         print(f"{Text_File.exception_text["value_error"]} {value}")
-        return None
-    
+        
     except Exception as e:
         print(f"{Text_File.exception_text["common_function_exception"]}")
-        return None
+    
+    return None ##It will None if any exception will arise
 
 
 def main()->None:

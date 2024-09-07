@@ -14,14 +14,19 @@ class Text_File:
         "host_ip_prompt":"Enter your HOST IP ADDRESS:-",
         "mutli_auth_welcome":" Welcome to Multi Device Connection Authentication Page ".center(shutil.get_terminal_size().columns,"!"),
         "same_credentials":"Do you have same credentaisl for all device (Yes/No):-",
-        "range_of_ip":"Specify number of device IP Address Range:-",
-        "ip_address_range":"Enter Your Ip Address no"
+        "range_of_ip":"Specify number of device IP Address Range eg:(1,10,15,30,45,50):-",
+        "ip_address_range":"Enter Your Ip Address no",
+        "validip_banner":"VALID IP ADDRESS".center(shutil.get_terminal_size().columns,"!"),
+        "invalidip_banner":"INVALID IP ADDRESS".center(shutil.get_terminal_size().columns,"!"),
+        "proceed_confirmation":"Do you want to proceed (Yes/No):-"
 
     }
     ##common text
     exception_text ={
         "common_function_exception": "Your function have exception",
         "value_error":"You have passed wrong value",
+        "CalledProcessError":"Subprocess Exception occured"
+
     }
     ##error text
     error_text = {
@@ -30,5 +35,6 @@ class Text_File:
     }
     ##debug text
     debug_text = {
-        "device_details": "We got the device details"
+        "device_details": "We got the device details",
+        "device_respond":"Device is Active".center(shutil.get_terminal_size().columns),
     }
