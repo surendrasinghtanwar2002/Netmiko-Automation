@@ -62,8 +62,8 @@ class ScriptMenu:
 
     def menu_items_list(self) -> list:
         current_dir = os.path.dirname(os.path.abspath(__name__))
-        relative_path = "../script/cisco_script/"
-        path = os.path.abspath(os.path.join(current_dir, relative_path))
+        relative_path = "automation\scripts\cisco_script"
+        path = os.path.join(current_dir, relative_path)
         exclude_items = {"__init__.py", "unwanted_file.py", "__pycache__"}
         dir_list = [item.strip(".py") for item in os.listdir(path) if item not in exclude_items]
         print(f"Menu items: {dir_list}")  # Debugging statement
