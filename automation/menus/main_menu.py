@@ -2,7 +2,9 @@
 import os
 import importlib.util
 from automation.menus.menu_utils import MenuUtils
-
+from automation.device_connection.device_connection import Device_Connection
+from assets.text_file import Text_File
+from automation.authentication.authentication import single_device_auth,multiple_device_auth,clear
 ## Main Menu Class
 class MainMenu:
     def __init__(self, menu_utils: MenuUtils, connection_menu: 'ConnectionTypeMenu') -> None:
@@ -19,28 +21,28 @@ class MainMenu:
 
     # Define specific functions for each selection
     def handle_cisco(self)->None:
-        print("Handling Cisco script execution.")
+        print("Handling Cisco script execution.")   ##Debug
         self.connection_menu.connection_display_menu()
         return True
 
     def handle_juniper(self)->None:
-        print("Handling Juniper script execution.")
+        print("Handling Juniper script execution.")     ##Debug
         self.connection_menu.connection_display_menu()
         return True
 
     def handle_arista(self)->None:
-        print("Handling Arista script execution.")
+        print("Handling Arista script execution.")      ##Debug
         self.connection_menu.connection_display_menu()
         return True
 
     def handle_dell(self)->None:
-        print("Handling Dell script execution.")
+        print("Handling Dell script execution.")        ##Debug
         self.connection_menu.connection_display_menu()
         return True
 
     # Default action if selection is not found (optional)
     def default_action(self)->None:
-        print("Invalid selection, please try again.")
+        print("Invalid selection, please try again.")   ##Debug
         return True
 
     # Display Menu  
@@ -57,11 +59,16 @@ class ScriptMenu:
         self.menu_utils = menu_utils
         self.script_action = self.load_script_actions()
         self.menu_items = self.menu_items_list()
+        self.cisco_script_path = self.cisco_script_path()
 
+    def cisco_script_path(self):
+        current_dir = os.path.dirname(os.path.abspath(__name__))
+        relative_path = "automation\scripts\cisco_script"
+        return os.path.join(current_dir, relative_path)
+    
     def menu_items_list(self) -> list:
-        path = "/Users/surendrasingh/Desktop/Netmiko-Automation/automation/scripts/cisco_script"
-        exclude_items = {"__init__.py", "unwanted_file.py"}
-        dir_list = [item.strip(".py") for item in os.listdir(path) if item not in exclude_items]
+        exclude_items = {"__init__.py", "unwanted_file.py", "__pycache__"}
+        dir_list = [item.strip(".py") for item in os.listdir(self.cisco_script_path) if item not in exclude_items]
         print(f"Menu items: {dir_list}")  # Debugging statement
         return dir_list
 
@@ -85,8 +92,9 @@ class ScriptMenu:
         return action
 
     def import_module(self, script_name):           ##Need to work on this area
-        path = "/Users/surendrasingh/Desktop/Netmiko-Automation/scripts/cisco_script"
-        module_path = os.path.join(path, f"{script_name}.py")
+        # path = "/Users/surendrasingh/Desktop/Netmiko-Automation/scripts/cisco_script"               ##Area need some work where problem need to be resolved
+        # replaced path with self.cisco_script_path
+        module_path = os.path.join(self.cisco_script_path, f"{script_name}.py")
         if not os.path.isfile(module_path):
             print(f"Module {script_name} does not exist.")
             return None
@@ -119,11 +127,31 @@ class ConnectionTypeMenu:
         self.menu_items = ["Single Device Connection", "Multiple Device Connection", "Back to Main Menu"]
 
     def single_device_connection(self):
-        self.procedure.script_display_menu()
-        return True
+        username, userpass, hostipaddress = single_device_auth()
+        # print(f"------> {username} <-------")
+        # print(f"------> {userpass} <-------")                     ##Only used for debuggin area only
+        # print(f"------> {hostipaddress} <-------")
+        try:
+            connection= Device_Connection(username,userpass,hostipaddress)
+            if connection.single_device_connection():
+                self.procedure.script_display_menu()
+            else:
+                print(Text_File.error_text["device_details_error"])
+            return True
+        
+        except ValueError as value:
+            print(f"{Text_File.exception_text["value_error"]} {value}")
+        
+        except Exception as e:
+            print(f"{Text_File.exception_text["common_function_exception"]}")
 
     def multiple_device_connection(self):
-        self.procedure.script_display_menu()
+        username,userpass,hostipaddress = multiple_device_auth()
+        connection = Device_Connection(username,userpass,hostipaddress)
+        if connection.multipl_device_connection():
+            self.procedure.script_display_menu()    
+        else:
+            print(Text_File.error_text["device_details_error"])
         return True
 
     def back_to_main_menu(self):
