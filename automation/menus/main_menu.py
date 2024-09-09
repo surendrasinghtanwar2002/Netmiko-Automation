@@ -17,7 +17,7 @@ class MainMenu:
             "4": self.handle_dell,
             "5": self.default_action
         }
-        self.menu_items = ["Cisco", "Juniper", "Arista", "Dell"]
+        self.menu_items = ["Cisco", "Juniper", "Arista", "Dell"]        ##Static Items
 
     # Define specific functions for each selection
     def handle_cisco(self)->None:
@@ -61,36 +61,39 @@ class ScriptMenu:
         self.menu_items = self.menu_items_list()
         self.cisco_script_path = self.cisco_script_path()
 
+    
+
+
     def cisco_script_path(self):                ##Script Path Specifier
         current_dir = os.path.dirname(os.path.abspath(__name__))
         print(f"_____________> {current_dir} _____________<")
-        relative_path = "automation/scripts/cisco_script"
+        relative_path = "automation\scripts\cisco_script" if os.name =="nt" else "automation/scripts/cisco_script"       ##
         result = os.path.join(current_dir, relative_path)
         return result
 
-    def menu_items_list(self) -> list:
+    def menu_items_list(self) -> list:              ##menu items list
         exclude_items = {"__init__.py", "unwanted_file.py", "__pycache__"}
         dir_list = [item.strip(".py") for item in os.listdir(self.cisco_script_path()) if item not in exclude_items]
         print(f"Menu items: {dir_list}")  # Debugging statement
         return dir_list
 
-    def load_script_actions(self) -> dict:
+    def load_script_actions(self) -> dict:              ##load script action menu return
         menu_items = self.menu_items_list()
         items_sequence = len(menu_items)
         print(f"Menu items for actions: {menu_items}")  # Debugging statement
-        return {str(i + 1): self.create_script_action(menu_items[i]) for i in range(items_sequence)}
+        return {str(i + 1): self.create_script_action(menu_items[i]) for i in range(items_sequence)}                
 
-    def create_script_action(self, script_name: str):
+    def create_script_action(self, script_name: str): 
         def action(*args, **kwargs):
-            module = self.import_module(script_name)
+            module = self.import_module(script_name)                ##Problem occur statement
             print(f"--------->This is the module of the function {module} <-------------")
             if module:
-                func = getattr(module, 'main', None)
+                func = getattr(module, 'main', None)            ##getattr function boject "main"            
                 print(f"Name of the function:- --------> {func} <---------")
                 if func and callable(func):
-                    try:
-                        print(f"Calling {script_name}.main with args={args} kwargs={kwargs}")
-                        result = func(*args, **kwargs)
+                    try:                
+                        print(f"Calling {script_name}.main with args={args} kwargs={kwargs}")           
+                        result = func(*args, **kwargs)                          ##Connect handler netmiko (""deive_, device_typew, username ) -> Object
                         print(f"Result of {script_name}.main: {result}")
                         return result
                     except TypeError as e:
@@ -119,12 +122,9 @@ class ScriptMenu:
             action = self.script_action.get(user_choice)            ##Dynamically generate function object
             if action:
                 print(f"Executing action for choice: {user_choice}")  # Debug statement
-                result = action()
-                print(f"Action result: {result}")  # Debug statement
-                if result is not None:
-                    print(result)  # Ensure the result is printed
-            if not result:
-                break
+                result = action(connection)
+                print(f"Action result: {result}")
+                user_choice = input("Enter your choice")
 
 ## Connection Type Class
 class ConnectionTypeMenu:

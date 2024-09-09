@@ -4,7 +4,6 @@ import shutil
 import os
 import platform
 
-
 ##clear screen function
 def clear()->None:
     if platform.system() == 'Windows':
