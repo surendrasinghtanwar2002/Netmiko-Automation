@@ -1,2 +1,7 @@
 .venv/
 .gitignore
+# Ignore __pycache__ directories
+__pycache__/
+
+# Ignore .pyc files
+*.pyc
