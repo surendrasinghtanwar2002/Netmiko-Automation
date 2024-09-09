@@ -171,7 +171,7 @@ class ConnectionTypeMenu:
 
     def back_to_main_menu(self):
         self.main_menu_instance.display()  # Call to MainMenu.display()
-        return False
+        return True
 
     def default_action(self):
         return False
