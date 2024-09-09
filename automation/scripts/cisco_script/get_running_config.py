@@ -18,8 +18,6 @@ def get_running_config(*args, **kwargs) -> typing.Optional[str]:
         return None
 
 
-
-
 # ##Main function calls here 
 def main(*args, **kwargs):
     return get_running_config(*args, **kwargs)

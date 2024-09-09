@@ -61,14 +61,16 @@ class ScriptMenu:
         self.menu_items = self.menu_items_list()
         self.cisco_script_path = self.cisco_script_path()
 
-    def cisco_script_path(self):
+    def cisco_script_path(self):                ##Script Path Specifier
         current_dir = os.path.dirname(os.path.abspath(__name__))
-        relative_path = "automation\scripts\cisco_script"
-        return os.path.join(current_dir, relative_path)
+        print(f"_____________> {current_dir} _____________<")
+        relative_path = "automation/scripts/cisco_script"
+        result = os.path.join(current_dir, relative_path)
+        return result
 
     def menu_items_list(self) -> list:
         exclude_items = {"__init__.py", "unwanted_file.py", "__pycache__"}
-        dir_list = [item.strip(".py") for item in os.listdir(self.cisco_script_path) if item not in exclude_items]
+        dir_list = [item.strip(".py") for item in os.listdir(self.cisco_script_path()) if item not in exclude_items]
         print(f"Menu items: {dir_list}")  # Debugging statement
         return dir_list
 
@@ -123,7 +125,6 @@ class ScriptMenu:
                     print(result)  # Ensure the result is printed
             if not result:
                 break
-
 
 ## Connection Type Class
 class ConnectionTypeMenu:
