@@ -76,11 +76,15 @@ class ScriptMenu:
     def create_script_action(self, script_name: str):
         def action(*args, **kwargs):
             module = self.import_module(script_name)
+            print(f"--------->This is the module of the function {module} <-------------")
             if module:
                 func = getattr(module, 'main', None)
+                print(f"Name of the function:- --------> {func} <---------")
                 if func and callable(func):
                     try:
+                        print(f"Calling {script_name}.main with args={args} kwargs={kwargs}")
                         result = func(*args, **kwargs)
+                        print(f"Result of {script_name}.main: {result}")
                         return result
                     except TypeError as e:
                         print(f"Error calling {script_name}.main with args={args} kwargs={kwargs}: {e}")
@@ -89,6 +93,7 @@ class ScriptMenu:
                     return None
             return False
         return action
+
 
     def import_module(self, script_name: str):
         path = "/Users/surendrasingh/Desktop/Netmiko-Automation/automation/scripts/cisco_script"
@@ -107,12 +112,13 @@ class ScriptMenu:
             user_choice = self.menu_utils.get_user_choice(self.script_action)
             action = self.script_action.get(user_choice)            ##Dynamically generate function object
             if action:
-                result = action(connection)  # Pass the connection to the action and get the result
-                if result is True:
-                    break
-                elif result is not None:
-                    print(f"Result from script: {result}") 
-        return result  # Return the final result
+                print(f"Executing action for choice: {user_choice}")  # Debug statement
+                result = action()
+                print(f"Action result: {result}")  # Debug statement
+                if result is not None:
+                    print(result)  # Ensure the result is printed
+            if not result:
+                break
 
 
 ## Connection Type Class
