@@ -59,11 +59,16 @@ class ScriptMenu:
         self.menu_utils = menu_utils
         self.script_action = self.load_script_actions()
         self.menu_items = self.menu_items_list()
+        self.cisco_script_path = self.cisco_script_path()
+
+    def cisco_script_path(self):
+        current_dir = os.path.dirname(os.path.abspath(__name__))
+        relative_path = "automation\scripts\cisco_script"
+        return os.path.join(current_dir, relative_path)
 
     def menu_items_list(self) -> list:
-        path = "/Users/surendrasingh/Desktop/Netmiko-Automation/automation/scripts/cisco_script"
         exclude_items = {"__init__.py", "unwanted_file.py", "__pycache__"}
-        dir_list = [item.strip(".py") for item in os.listdir(path) if item not in exclude_items]
+        dir_list = [item.strip(".py") for item in os.listdir(self.cisco_script_path) if item not in exclude_items]
         print(f"Menu items: {dir_list}")  # Debugging statement
         return dir_list
 
@@ -95,9 +100,8 @@ class ScriptMenu:
         return action
 
 
-    def import_module(self, script_name: str):
-        path = "/Users/surendrasingh/Desktop/Netmiko-Automation/automation/scripts/cisco_script"
-        module_path = os.path.join(path, f"{script_name}.py")
+    def import_module(self, script_name):           ##Resolved path variable issue 
+        module_path = os.path.join(self.cisco_script_path, f"{script_name}.py")
         if not os.path.isfile(module_path):
             print(f"Module {script_name} does not exist.")
             return None
