@@ -65,35 +65,42 @@ class ScriptMenu:
         current_dir = os.path.dirname(os.path.abspath(__name__))
         relative_path = "automation\scripts\cisco_script"
         return os.path.join(current_dir, relative_path)
-    
+
     def menu_items_list(self) -> list:
         exclude_items = {"__init__.py", "unwanted_file.py", "__pycache__"}
         dir_list = [item.strip(".py") for item in os.listdir(self.cisco_script_path) if item not in exclude_items]
         print(f"Menu items: {dir_list}")  # Debugging statement
         return dir_list
 
-    def load_script_actions(self)->None:
+    def load_script_actions(self) -> dict:
         menu_items = self.menu_items_list()
         items_sequence = len(menu_items)
         print(f"Menu items for actions: {menu_items}")  # Debugging statement
         return {str(i + 1): self.create_script_action(menu_items[i]) for i in range(items_sequence)}
 
-    def create_script_action(self, script_name)->None:
-        def action():
+    def create_script_action(self, script_name: str):
+        def action(*args, **kwargs):
             module = self.import_module(script_name)
+            print(f"--------->This is the module of the function {module} <-------------")
             if module:
                 func = getattr(module, 'main', None)
+                print(f"Name of the function:- --------> {func} <---------")
                 if func and callable(func):
-                    func()
-                    return True
+                    try:
+                        print(f"Calling {script_name}.main with args={args} kwargs={kwargs}")
+                        result = func(*args, **kwargs)
+                        print(f"Result of {script_name}.main: {result}")
+                        return result
+                    except TypeError as e:
+                        print(f"Error calling {script_name}.main with args={args} kwargs={kwargs}: {e}")
                 else:
                     print(f"Function `main` not found in {script_name}")
+                    return None
             return False
         return action
 
-    def import_module(self, script_name):           ##Need to work on this area
-        # path = "/Users/surendrasingh/Desktop/Netmiko-Automation/scripts/cisco_script"               ##Area need some work where problem need to be resolved
-        # replaced path with self.cisco_script_path
+
+    def import_module(self, script_name):           ##Resolved path variable issue 
         module_path = os.path.join(self.cisco_script_path, f"{script_name}.py")
         if not os.path.isfile(module_path):
             print(f"Module {script_name} does not exist.")
@@ -103,14 +110,20 @@ class ScriptMenu:
         spec.loader.exec_module(module)
         return module
 
-    ##Displaying menu
-    def script_display_menu(self):
+    def script_display_menu(self, connection):  # Accept connection as parameter
         while True:
             self.menu_utils.display_menu(self.menu_items)
             user_choice = self.menu_utils.get_user_choice(self.script_action)
-            action = self.script_action.get(user_choice)
-            if action and action():
+            action = self.script_action.get(user_choice)            ##Dynamically generate function object
+            if action:
+                print(f"Executing action for choice: {user_choice}")  # Debug statement
+                result = action()
+                print(f"Action result: {result}")  # Debug statement
+                if result is not None:
+                    print(result)  # Ensure the result is printed
+            if not result:
                 break
+
 
 ## Connection Type Class
 class ConnectionTypeMenu:
@@ -128,28 +141,29 @@ class ConnectionTypeMenu:
 
     def single_device_connection(self):
         username, userpass, hostipaddress = single_device_auth()
-        # print(f"------> {username} <-------")
-        # print(f"------> {userpass} <-------")                     ##Only used for debuggin area only
-        # print(f"------> {hostipaddress} <-------")
         try:
-            connection= Device_Connection(username,userpass,hostipaddress)
-            if connection.single_device_connection():
-                self.procedure.script_display_menu()
+            connection = Device_Connection(username, userpass, hostipaddress)
+            netmiko_connection = connection.single_device_connection()
+            if netmiko_connection:
+                self.procedure.script_display_menu(netmiko_connection)  # Pass the connection here
             else:
                 print(Text_File.error_text["device_details_error"])
             return True
         
         except ValueError as value:
-            print(f"{Text_File.exception_text["value_error"]} {value}")
+            print(f"{Text_File.exception_text['value_error']} {value}")
         
         except Exception as e:
-            print(f"{Text_File.exception_text["common_function_exception"]}")
+            print(f"{Text_File.exception_text['common_function_exception']}",e)
 
     def multiple_device_connection(self):
-        username,userpass,hostipaddress = multiple_device_auth()
-        connection = Device_Connection(username,userpass,hostipaddress)
-        if connection.multipl_device_connection():
-            self.procedure.script_display_menu()    
+        username, userpass, hostipaddress = multiple_device_auth()
+        connection = Device_Connection(username, userpass, hostipaddress)
+        netmiko_connection = connection.multiple_device_connection()  # Fixed method name
+        if netmiko_connection:
+            result = self.procedure.script_display_menu(netmiko_connection)  
+            if result:
+                print("We have got the result")         ##This is the 
         else:
             print(Text_File.error_text["device_details_error"])
         return True
