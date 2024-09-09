@@ -18,7 +18,8 @@ class Text_File:
         "ip_address_range":"Enter Your Ip Address no",
         "validip_banner":"VALID IP ADDRESS".center(shutil.get_terminal_size().columns,"!"),
         "invalidip_banner":"INVALID IP ADDRESS".center(shutil.get_terminal_size().columns,"!"),
-        "proceed_confirmation":"Do you want to proceed (Yes/No):-"
+        "proceed_confirmation":"Do you want to proceed (Yes/No):-",
+        "Data_retrieved":"Succesfully Data have been retrieved"
 
     }
     ##common text
