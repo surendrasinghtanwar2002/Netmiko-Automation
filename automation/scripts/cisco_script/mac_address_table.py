@@ -1,7 +1,5 @@
 import typing
 from assets.text_file import Text_File
-##Get Running-Config Details
-# In the same module where `get_running_config` is defined
 
 def mac_address_table(*args, **kwargs) -> typing.Optional[str]:
     try:
@@ -22,11 +20,9 @@ def mac_address_table(*args, **kwargs) -> typing.Optional[str]:
 def main(*args, **kwargs):
     return mac_address_table(*args, **kwargs)
 
-# ##calling the main function
 
 if __name__ == "__main__":
-    # Simulate args and kwargs if necessary
-    result = main()  # Call the main function
+    result = main() 
     print(f"Main function result: {result}")
 
     

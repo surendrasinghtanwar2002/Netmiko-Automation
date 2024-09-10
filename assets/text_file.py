@@ -19,11 +19,11 @@ class Text_File:
         "validip_banner":"VALID IP ADDRESS".center(shutil.get_terminal_size().columns,"!"),
         "invalidip_banner":"INVALID IP ADDRESS".center(shutil.get_terminal_size().columns,"!"),
         "proceed_confirmation":"Do you want to proceed (Yes/No):-",
-        "Data_retrieved":"Succesfully Data have been retrieved",
-        "Successful_File_Creation":"Your File Have been created Succesfully",
-        "File_save_permission":"Do you wan,t to say to your file (Yes/No)",
+        "Data_retrieved":"Succesfully Data have been retrieved".center(shutil.get_terminal_size().columns,"!"),
+        "Successful_File_Creation":"Your File Have been created Succesfully".center(shutil.get_terminal_size().columns,"!"),
+        "File_save_permission":"Do you want to say to your file (Yes/No):- ",
         "Json_conversion_permission":"Do you want to convert raw data into json",
-        "Exit_Permission":"Do you wan't to exit from the menu"
+        "Exit_Permission":"Do you want to exit from the menu (Yes/No):- "
     }
     ##common text
     exception_text ={

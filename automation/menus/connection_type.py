@@ -17,7 +17,7 @@ class ConnectionTypeMenu:
     ##Handler for back_to_main_menu
     def back_to_main_menu(self) -> None:
         print("Navigating to Main Menu...")
-        from automation.menus.main_menu import MainMenu             ##Delay Factor
+        from automation.menus.main_menu import MainMenu                 ##I have imported this module to avoid the loop          
         main_menu = MainMenu(self.menu_utils)               
         main_menu.display()
 

@@ -1,7 +1,5 @@
 import typing
 from assets.text_file import Text_File
-##Get Running-Config Details
-# In the same module where `get_running_config` is defined
 
 def get_running_config(*args, **kwargs) -> typing.Optional[str]:
     try:
@@ -22,12 +20,8 @@ def get_running_config(*args, **kwargs) -> typing.Optional[str]:
 def main(*args, **kwargs):
     return get_running_config(*args, **kwargs)
 
-
 # ##calling the main function
-
 if __name__ == "__main__":
-    # Simulate args and kwargs if necessary
     result = main()  # Call the main function
-    print(f"Main function result: {result}")
 
     

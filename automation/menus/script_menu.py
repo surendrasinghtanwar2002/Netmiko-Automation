@@ -8,7 +8,7 @@ from time import time
 ##Script Menu Class
 class ScriptMenu:
     def __init__(self, menu_utils) -> None:
-        self.menu_utils = menu_utils
+        self.menu_utils = menu_utils            ##They all are instance attributes
         self.script_action = self.load_script_actions()
         self.menu_items = self.menu_items_list()
         self.cisco_script_path = self.cisco_script_path()
@@ -34,16 +34,12 @@ class ScriptMenu:
 
     def create_script_action(self, script_name: str): 
         def action(*args, **kwargs):
-            module = self.import_module(script_name)                ##Problem occur statement
-            print(f"--------->This is the module of the function {module} <-------------")
+            module = self.import_module(script_name)                
             if module:
                 func = getattr(module, 'main', None)            ##getattr function boject "main"            
-                print(f"Name of the function:- --------> {func} <---------")
                 if func and callable(func):
                     try:                
-                        print(f"Calling {script_name}.main with args={args} kwargs={kwargs}")           
-                        result = func(*args, **kwargs)                          ##Connect handler netmiko (""deive_, device_typew, username ) -> Object
-                        print(f"Result of {script_name}.main: {result}")
+                        result = func(*args, **kwargs)               
                         return result
                     except TypeError as e:
                         print(f"Error calling {script_name}.main with args={args} kwargs={kwargs}: {e}")
@@ -94,6 +90,7 @@ class ScriptMenu:
             file_choice = input(Text_File.common_text["File_save_permission"]).strip().lower()    
             if file_choice == "yes":            
                 self.__file_creation(File_name="File_Output",data__=result)
+            
             exit_permission = input(Text_File.common_text["Exit_Permission"]).strip().lower()
             if exit_permission == "yes":
                 return True
@@ -112,11 +109,11 @@ class ScriptMenu:
             user_choice = self.menu_utils.get_user_choice(self.script_action)
             action = self.script_action.get(user_choice)            ##Dynamically generate function object
             if action:
-                print(f"This is action output {action} <<<<<<<<<")
-                print(f"Executing action for choice: {user_choice}")  # Debug statement
-                result = action(connection)
-                output = self.result_handler(result)                 ##Calling the handler to manage the result
-                user_choice = input("Need to be stucked here until and unless i get the re")
+                result = action(connection)  
+                output = self.result_handler(result)
+                if output == True:
+                    break
+
 
                   
                 
