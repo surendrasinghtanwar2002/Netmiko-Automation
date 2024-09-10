@@ -116,11 +116,9 @@ class ScriptMenu:
                 print(f"Executing action for choice: {user_choice}")  # Debug statement
                 result = action(connection)
                 output = self.result_handler(result)                 ##Calling the handler to manage the result
-                if output != True:
-                    pass
-                else:
-                    break
-        self.navigation.display()           ##Going to main Menu
+                user_choice = input("Need to be stucked here until and unless i get the re")
+
+                  
                 
                     
             

@@ -22,11 +22,11 @@ class ConnectionTypeMenu:
         main_menu.display()
 
     ##Handler for script menu
-    @staticmethod           ##This is the static method
-    def navigating_script_menu(self)->None:
+    ##This is the static method
+    def __navigating_script_menu(self, connection)->None:
         print("Navigation to script menu.....")
         script_navigation = ScriptMenu(self.menu_utils)
-        script_navigation.script_display_menu()
+        script_navigation.script_display_menu(connection)       ##Passing the netmiko object
 
 
     def single_device_connection(self):
@@ -35,7 +35,7 @@ class ConnectionTypeMenu:
             connection = Device_Connection(username, userpass, hostipaddress)
             netmiko_connection = connection.single_device_connection()
             if netmiko_connection:
-                self.navigating_script_menu()  # Pass the connection here
+                self.__navigating_script_menu(netmiko_connection)  # Pass the connection here
             else:
                 print(Text_File.error_text["device_details_error"])
             return True
@@ -49,9 +49,9 @@ class ConnectionTypeMenu:
     def multiple_device_connection(self):
         username, userpass, hostipaddress = multiple_device_auth()
         connection = Device_Connection(username, userpass, hostipaddress)
-        netmiko_connection = connection.multiple_device_connection()  # Fixed method name
+        netmiko_connection = connection.multipl_device_connection()  # Fixed method name
         if netmiko_connection:
-            result = self.navigating_script_menu(netmiko_connection) 
+            result = self.__navigating_script_menu(netmiko_connection) 
             if result:
                 print("We have got the result")         ##This is the 
         else:
