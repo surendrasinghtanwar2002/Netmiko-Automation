@@ -1,29 +1,19 @@
-import typing
 from assets.text_file import Text_File
+from automation.scripts.configuration_menu.configuration_menu import configuration_menu,dynamic_match
 
 def configure_interfaces(*args, **kwargs):
     netmiko_connection = args[0]            ##unwrap the tupple
+    menu_items = ["Get Interface Details","Interfaces Configuration""Exit"]
     try:
-        result= netmiko_connection.send_command("show ip interface brief", strip_prompt=False, strip_command=False)
-        print(f"This is your result {result}")
+        interface_result= netmiko_connection.send_command("show ip interface brief", strip_prompt=False, strip_command=False)
         user_choice = input("Do you want to make any changes from the above outout (Yes/No):-").strip().lower()
         if user_choice == "yes":
-            print("(1)Want to make interface UP")
-            print("(2)Want to make assign the IP Addresss")
-            print("(3)Want to update some thing")
-            user_input = int(input("Enter your choice:- "))
-            match user_input:
-                case 1:
-                    print("Which interface you want to up")
-                case 2:
-                    print("Which interface you want to assign the IP Address")
-                case 3:
-                    print("Do you want to update something")
-                case _:
-                    print("You have selected the wrong choice")
-
+            configuration_menu(menu_items)                  ##Getting the output
+            case_key = input("Enter your choice:- ")
+            result = dynamic_match(case_key,interface_result)
+            return result                ##this is the result of the function
         else:
-            print("We can;t perform the changes")
+            print("We can't perform the changes")
 
     except ValueError as value:
         print(Text_File.exception_text["value_error"],value)

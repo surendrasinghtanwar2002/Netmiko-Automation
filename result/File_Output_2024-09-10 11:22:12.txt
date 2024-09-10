@@ -1,3 +1,0 @@
-show calendar
-02:14:34 UTC Tue Feb 18 1908
-Router1#
