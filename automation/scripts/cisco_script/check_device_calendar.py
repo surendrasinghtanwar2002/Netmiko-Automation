@@ -1,10 +1,10 @@
 import typing
 from assets.text_file import Text_File
 
-def get_interface_details(*args, **kwargs) -> typing.Optional[str]:
+def check_device_calendar(*args, **kwargs) -> typing.Optional[str]:
     try:
         netmiko_connection = args[0]  # Unwrapping the tuple
-        result = netmiko_connection.send_command("show ip interface brief", strip_prompt=False, strip_command=False)
+        result = netmiko_connection.send_command("show calendar", strip_prompt=False, strip_command=False)
         if result:
             print(Text_File.common_text["Data_retrieved"])
             return (result)
@@ -18,7 +18,7 @@ def get_interface_details(*args, **kwargs) -> typing.Optional[str]:
 
 # ##Main function calls here 
 def main(*args, **kwargs):
-    return get_interface_details(*args, **kwargs)
+    return check_device_calendar(*args, **kwargs)
 
 # ##calling the main function
 if __name__ == "__main__":
