@@ -4,7 +4,6 @@ import shutil
 import os
 import platform
 
-
 ##clear screen function
 def clear()->None:
     if platform.system() == 'Windows':
@@ -13,10 +12,10 @@ def clear()->None:
         os.system('clear')
 
 ##single_device_connection_auth
-def single_device_auth():
+def single_device_auth():                                   
     try:
         clear()
-        counter_start = 0
+        counter_start = 0                   
         counter_end= 3
         while counter_start < counter_end:
             user_name = input(Text_File.common_text["username"])
@@ -67,7 +66,7 @@ def multiple_device_auth()->tuple[str,str,list]:
         print(f"{Text_File.exception_text["value_error"]} {value}")
         
     except Exception as e:
-        print(f"{Text_File.exception_text["common_function_exception"]}")
+        print(f"{Text_File.exception_text["common_function_exception"]}",e)
     
     return None ##It will None if any exception will arise
 

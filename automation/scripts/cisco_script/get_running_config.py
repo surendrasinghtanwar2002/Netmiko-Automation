@@ -9,15 +9,13 @@ def get_running_config(*args, **kwargs) -> typing.Optional[str]:
         result = netmiko_connection.send_command("show running-config", strip_prompt=False, strip_command=False)
         if result:
             print(Text_File.common_text["Data_retrieved"])
-            return result
+            return (result)
         else:
             print(Text_File.error_text)
             return None
     except Exception as e:
         print(Text_File.exception_text["common_function_exception"], e)
         return None
-
-
 
 
 # ##Main function calls here 

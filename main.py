@@ -1,13 +1,9 @@
-from automation.menus.menu_utils import MenuUtils
-from automation.menus.main_menu import MainMenu, ScriptMenu, ConnectionTypeMenu
+from automation.depen_container.depen_container import DIContainer
 
-def main():
-    menu_utils = MenuUtils()
-    script_menu = ScriptMenu(menu_utils=menu_utils)
-    connection_menu = ConnectionTypeMenu(main_menu_instance=None, script=script_menu, menu_utils=menu_utils) 
-    main_menu = MainMenu(menu_utils=menu_utils, connection_menu=connection_menu)
-    connection_menu.main_menu_instance = main_menu
-    main_menu.display()
+def main()->None:
+    container = DIContainer()
+    main_menu = container.get_main_menu()
+    main_menu.display()                 ##Main Display Function
 
 if __name__ == "__main__":
     main()
