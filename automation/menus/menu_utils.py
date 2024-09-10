@@ -13,7 +13,7 @@ class MenuUtils:
         else:
             os.system('clear')
 
-    def display_menu(self, menu_items:List)->None:
+    def display_menu(self, menu_items:List[str])->None:
         try:
             self.clear()     
             for index, item in enumerate(menu_items, start=1):
@@ -35,10 +35,3 @@ class MenuUtils:
         except Exception as error:
             print("An error occurred:", error)
 
-# Example usage
-if __name__ == "__main__":
-    menu = MenuUtils()
-    items = ['Option 1', 'Option 2', 'Option 3']
-    menu.display_menu(items)
-    choice = menu.get_user_choice(['1', '2', '3'])
-    print(f"You selected: {choice}")

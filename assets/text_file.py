@@ -19,20 +19,25 @@ class Text_File:
         "validip_banner":"VALID IP ADDRESS".center(shutil.get_terminal_size().columns,"!"),
         "invalidip_banner":"INVALID IP ADDRESS".center(shutil.get_terminal_size().columns,"!"),
         "proceed_confirmation":"Do you want to proceed (Yes/No):-",
-        "Data_retrieved":"Succesfully Data have been retrieved"
-
+        "Data_retrieved":"Succesfully Data have been retrieved",
+        "Successful_File_Creation":"Your File Have been created Succesfully",
+        "File_save_permission":"Do you wan,t to say to your file (Yes/No)",
+        "Json_conversion_permission":"Do you want to convert raw data into json",
+        "Exit_Permission":"Do you wan't to exit from the menu"
     }
     ##common text
     exception_text ={
         "common_function_exception": "Your function have exception",
         "value_error":"You have passed wrong value",
-        "CalledProcessError":"Subprocess Exception occured"
+        "CalledProcessError":"Subprocess Exception occured",
+        "file_not_found":"File not Founded Exception"
 
     }
     ##error text
     error_text = {
         "device_details_error":"!!! You have provided wrong details of the device !!!".center(shutil.get_terminal_size().columns),
-        "limit_exceed":"You have reached your limit"
+        "limit_exceed":"You have reached your limit",
+        "Unsuccessful_File_Creation":"Your File Have not been created"
     }
     ##debug text
     debug_text = {
