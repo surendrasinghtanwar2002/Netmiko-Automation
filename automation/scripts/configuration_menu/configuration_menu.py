@@ -1,4 +1,7 @@
 from assets.text_file import Text_File
+import json
+from tabulate import tabulate
+import shutil
 
 ##Configuration Menu Loop
 def configuration_menu(menu_items:list)->None:
@@ -21,14 +24,60 @@ def interface_details(interface_details):
         print(Text_File.exception_text["common_function_exception"],e)
         return False
 
-##Get Interface Details
-def interface_configuration():
+##Convert python object into json string
+def json_string_convert(interface_Details_Data):
     try:
-        print("Get Interface Details")
+        print("In this section we will convert python object into json string")
+        result = json.dumps(interface_Details_Data)
+        return result
+    except ValueError as value:
+        print("Value was not assigned",value)
+    except Exception as e:
+        print("Exception as except",e)
+
+##Configuration Interface
+def interface_validation(interface_detail,interface_name,new_ip = None ):
+    try:
+        interface_confirmation = next((items for items in interface_detail if items["interface"] == interface_name),None)
+        if interface_confirmation:
+            return [f"interface {interface_name}",f"ip address {new_ip}","no shut"]
+        else:
+            return None
+    except ValueError as value:
+        print(f"This is your value error {value}")
+
+##Get Interface Details
+def interface_configuration(interface_details,netmiko_connection):
+    try:
+        header = ["Interface Name","Ip Address","Status","Prototype"]
+        table_data = []
+        for data in interface_details:
+            row = [data.get("interface"),
+                   data.get("ip_address"),
+                   data.get("status"),
+                   data.get("proto")
+                   ]
+            table_data.append(row)
+        ##display the items
+        print(tabulate(table_data, header, tablefmt="heavy_grid"))
+              
+        user_input = input("Do you want to configure anything:-").strip().lower()
+        if user_input == "yes":
+            interface_name = input("Please Enter your Interface Name from the above list:- ")
+            ip_address = input("Please Enter your ip address:- ").strip()
+            subnet_mask = input("Please Enter your Subnet Mask:-").strip()
+            command = interface_validation(interface_detail=interface_details,interface_name=interface_name,new_ip= (ip_address+" "+subnet_mask))
+            if command:
+                output = netmiko_connection.send_config_set(command)
+                print(output)
+        else:
+            print("We are not able to process on the work")
+            
     except Exception as e:
         print(Text_File.exception_text["common_function_exception"],e)
         return False
 
+##Default Execution
 def default_execution():
     try:
         print("Handle the Default statement")
