@@ -45,6 +45,7 @@ def interface_validation(interface_detail=None,interface_name= None,new_ip = Non
     except ValueError as value:
         print(f"This is your value error {value}")
 
+
 ##Get Interface Details
 def interface_configuration(*args):
     interface_details = args[2] ##Extracting items 1 from the tupple  
@@ -70,8 +71,8 @@ def interface_configuration(*args):
             command = interface_validation(interface_detail=interface_details,interface_name=interface_name,new_ip= (ip_address+" "+subnet_mask))
             if command:
                 output = netmiko_connection.send_config_set(command)
-                print(output)
-        else:
+                return output      ##It will return this output
+        else:   
             print("We are not able to process on the work")
             
     except Exception as e:
