@@ -37,9 +37,9 @@ def create_vlan(*args)->None:
         user_vlan_starting_range = int(input(Text_File.common_text["vlan_starting_range"]))
         user_vlan_ending_range = int(input(Text_File.common_text["vlan_ending_range"]))
         for vlanno in range(user_vlan_starting_range,user_vlan_ending_range+1):
-            output = netmiko_connection.send_config_set(f"vlan {vlanno}")
+            output = netmiko_connection.send_config_set([f"vlan {vlanno}"])
             print(output)
-        print(f"Your total vlan have been created {user_vlan_ending_range-user_vlan_starting_range}")
+        return(f"Your total vlan have been created {user_vlan_ending_range-user_vlan_starting_range}")
 
     except ValueError as value:
         print(Text_File.exception_text["value_error"],value)
@@ -53,9 +53,9 @@ def delete_vlan(*args)->None:
         user_vlan_starting_range = int(input(Text_File.common_text["vlan_starting_range"]))
         user_vlan_ending_range = int(input(Text_File.common_text["vlan_ending_range"]))
         for vlanno in range(user_vlan_starting_range,user_vlan_ending_range+1):
-            output = netmiko_connection.send_config_set(f"vlan {vlanno}")
+            output = netmiko_connection.send_config_set([f"no vlan {vlanno}"])
             print(output)
-        print(f"Your total vlan have been created {user_vlan_ending_range-user_vlan_starting_range}")
+        return(f"Your total vlan have been deleted {user_vlan_ending_range-user_vlan_starting_range}")
     except Exception as e:
         print(Text_File.exception_text["common_function_exception"])
 
