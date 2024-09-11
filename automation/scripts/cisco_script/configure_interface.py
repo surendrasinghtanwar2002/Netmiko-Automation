@@ -35,7 +35,7 @@ def json_string_convert(interface_Details_Data):
         print("Exception as except",e)
 
 ##Configuration Interface
-def interface_validation(interface_detail,interface_name,new_ip = None ):
+def interface_validation(interface_detail=None,interface_name= None,new_ip = None ):
     try:
         interface_confirmation = next((items for items in interface_detail if items["interface"] == interface_name),None)
         if interface_confirmation:
@@ -46,7 +46,9 @@ def interface_validation(interface_detail,interface_name,new_ip = None ):
         print(f"This is your value error {value}")
 
 ##Get Interface Details
-def interface_configuration(interface_details,netmiko_connection):
+def interface_configuration(*args):
+    interface_details = args[2] ##Extracting items 1 from the tupple  
+    netmiko_connection = args[3] ##Extracting items 2 from the tupple
     try:
         header = ["Interface Name","Ip Address","Status","Prototype"]
         table_data = []
@@ -85,11 +87,9 @@ def default_execution():
         print(Text_File.exception_text["common_function_exception"],e)
 
 ##dynamic Match Function
-def dynamic_match(case_key,*args):
-    handler = {
-        "1": interface_configuration,
-        "2": default_execution
-    }
+def dynamic_match(*args)->None:
+    case_key = args[0]    ##Extracting items 1 from the tupple  
+    handler = args[1]     ##Extracting items 2 from the tupple
     try:
         handler_function = handler.get(case_key,default_execution)          ##handler_function is reference to original function which is assigned by .get method
         result = handler_function(*args) if args else handler_function()    
@@ -99,14 +99,14 @@ def dynamic_match(case_key,*args):
         print(Text_File.exception_text["common_function_exception"],e)
 
 ##Configure_interface
-def configure_interfaces(*args):
-    netmiko_connection = args[0]            ##unwrap the tupple
-    menu_items = ["Interfaces Configuration","Exit"]
+def configure_interfaces(netmiko_connection)->None:
+    menu_items = ["Interfaces Configuration","Exit"]    ##Menu items
+    handler_details = {"1": interface_configuration,"2": default_execution}     ##handler
     try:
         interface_result= netmiko_connection.send_command("show ip interface brief",use_textfsm=True)
-        configuration_menu(menu_items)                  ##Getting the output
-        case_key = input("Enter your choice:- ")
-        result = dynamic_match(case_key,interface_result,netmiko_connection)
+        configuration_menu(menu_items)  ##This is display Menu Function
+        case_key = input(Text_File.common_text["User_choice"])
+        result = dynamic_match(case_key,handler_details,interface_result,netmiko_connection)
         return result                ##this is the result of the function
     
     except ValueError as value:
@@ -117,8 +117,8 @@ def configure_interfaces(*args):
 
 
 # ##Main function calls here 
-def main(*args, **kwargs):
-    return configure_interfaces(*args, **kwargs)
+def main(connection)->None:
+    return configure_interfaces(connection)
 
 # ##calling the main function
 if __name__ == "__main__":

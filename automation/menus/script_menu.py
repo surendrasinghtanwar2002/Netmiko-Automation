@@ -33,16 +33,16 @@ class ScriptMenu:
         return {str(i + 1): self.create_script_action(menu_items[i]) for i in range(items_sequence)}                
 
     def create_script_action(self, script_name: str): 
-        def action(*args, **kwargs):
+        def action(connection):
             module = self.import_module(script_name)                
             if module:
                 func = getattr(module, 'main', None)            ##getattr function boject "main"            
                 if func and callable(func):
                     try:                
-                        result = func(*args, **kwargs)               
+                        result = func(connection)               
                         return result
                     except TypeError as e:
-                        print(f"Error calling {script_name}.main with args={args} kwargs={kwargs}: {e}")
+                        print(f"Error calling {script_name}.main with args={connection}",e)
                 else:
                     print(f"Function `main` not found in {script_name}")
                     return None
