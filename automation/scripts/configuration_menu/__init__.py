@@ -1,2 +1,0 @@
-##Importing modules
-from automation.scripts.configuration_menu.configuration_menu import configuration_menu
