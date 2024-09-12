@@ -1,19 +1,24 @@
-def greet():
-    return "Hello!"
 
-def farewell():
-    return "Goodbye!"
+from netmiko import ConnectHandler
 
-# Function to call another function dynamically
-def call_function(func_name):
-    func = getattr(globals(), func_name, None)
+# Step 3: Connect to the Device and Apply Configuration
+device = {
+    'device_type': 'cisco_ios',
+    'ip': '192.168.1.120',
+    'username': 'admin',
+    'password': 'hackerzone',
+}
+
+try:
+    # Establish a connection to the network device
+    connection = ConnectHandler(**device)
     
-    if callable(func):
-        return func()
-    else:
-        return f"Function '{func_name}' not found or not callable."
+    output  = connection.send_command("show vlan brief")
+    print(output)
+    
+    # Disconnect from the device after configuration
+    connection.disconnect()
+    print("Configuration applied successfully.")
 
-# Dynamically call functions
-print(call_function("greet"))    # Output: Hello!
-print(call_function("farewell")) # Output: Goodbye!
-print(call_function("unknown"))  # Output: Function 'unknown' not found or not callable.
+except Exception as e:
+    print(f"Error occurred: {e}")

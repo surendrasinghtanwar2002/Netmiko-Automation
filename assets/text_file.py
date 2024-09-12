@@ -27,7 +27,10 @@ class Text_File:
         "User_choice":"Enter your choice:-",
         "vlan_configuration_permission":"Do you want to make configuration in Vlan (Yes/No):-",
         "vlan_starting_range":"Enter your vlan starting range:-",
-        "vlan_ending_range":"Enter your vlan ending range:-"
+        "vlan_ending_range":"Enter your vlan ending range:-",
+        "vlan_interface_starting":"Enter the interface range (e.g., GigabitEthernet1/0/1-5 or GigabitEthernet1/0/1):-",
+        "vlan_interface":"Enter your vlan number:-",
+        "Interface_Details":"From the above Interface Details Please Select Proper Range \n".center(shutil.get_terminal_size().columns),
     }
     ##common text
     exception_text ={

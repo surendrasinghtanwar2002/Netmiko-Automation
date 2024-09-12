@@ -1,7 +1,7 @@
 from assets.text_file import Text_File
 from tabulate import tabulate
 from automation.scripts.cisco_script.Configure_Interface import configuration_menu,dynamic_match
-
+import re
 ##Show vlan_details
 def show_vlan_details(*args)->str:
     vlan_details = args[2]
@@ -19,7 +19,7 @@ def show_vlan_details(*args)->str:
         return table_string
         
     except Exception as e:
-        print(Text_File.exception_text["common_function_exception"])
+        print(Text_File.exception_text["common_function_exception"],e)
 
 ##list items of the menu
 def vlan_configuration_menu()->None:
@@ -37,10 +37,10 @@ def create_vlan(*args)->None:
         user_vlan_starting_range = int(input(Text_File.common_text["vlan_starting_range"]))
         user_vlan_ending_range = int(input(Text_File.common_text["vlan_ending_range"]))
         for vlanno in range(user_vlan_starting_range,user_vlan_ending_range+1):
-            output = netmiko_connection.send_config_set([f"vlan {vlanno}"])
+            vlan_no_command = [f"vlan {vlanno}"]            ##passing a command for the execution
+            output = netmiko_connection.send_config_set(vlan_no_command)
             print(output)
         return(f"Your total vlan have been created {user_vlan_ending_range-user_vlan_starting_range}")
-
     except ValueError as value:
         print(Text_File.exception_text["value_error"],value)
     except Exception as e:
@@ -53,14 +53,67 @@ def delete_vlan(*args)->None:
         user_vlan_starting_range = int(input(Text_File.common_text["vlan_starting_range"]))
         user_vlan_ending_range = int(input(Text_File.common_text["vlan_ending_range"]))
         for vlanno in range(user_vlan_starting_range,user_vlan_ending_range+1):
-            output = netmiko_connection.send_config_set([f"no vlan {vlanno}"])
+            vlan_no_command = [f"no vlan {vlanno}"]
+            output = netmiko_connection.send_config_set(vlan_no_command)
             print(output)
         return(f"Your total vlan have been deleted {user_vlan_ending_range-user_vlan_starting_range}")
     except Exception as e:
+        print(Text_File.exception_text["common_function_exception"],e)
+
+##Interface Details Function
+def interface_details_print(netmiko_connection):
+    try:
+        table_data = []
+        header = ["Interface Name","Ip Address","Status","Prototype"]
+        output = netmiko_connection.send_command("show ip interface brief",use_textfsm=True)            ##Return the dictionary
+        for data in output:
+            row = [data.get("interface"),
+                   data.get("ip_address"),
+                   data.get("status"),
+                   data.get("proto")
+                   ]
+            table_data.append(row)
+         ##display the items
+        print(tabulate(table_data, header, tablefmt="heavy_grid"))
+
+    except Exception as e:
         print(Text_File.exception_text["common_function_exception"])
 
+##Allocate Interface to the vlan
+def allocate_interface(*args)->None:
+    try:
+        netmiko_connection = args[3]
+        interface_details_print(netmiko_connection)             ##This will print the interface details
+        print(Text_File.common_text["Interface_Details"])
+        vlan_interface_starting = input(Text_File.common_text["vlan_interface_starting"])
+        vlan_interface = int(input(Text_File.common_text["vlan_interface"]))
+        interfaces = []         ##interfaces name
+        range_pattern = re.match(r"([a-zA-Z]*[a-zA-Z]*)[\d/]+/(\d+-\d+)", vlan_interface_starting)  ##Pattern Matching GigabitEthernet1/0/1-5
+        if range_pattern:
+            basename = vlan_interface_starting.split("/") [0]               ##it will split the base Interface Name with
+            start, end = map(int, range_pattern.group(2).split('-'))
+            prefix = vlan_interface_starting.rsplit('/', 1)[0]
+            for i in range(start, end + 1):
+                interfaces.append(f"{prefix}/{i}")
+
+            # Handling specific interfaces like GigabitEthernet1/0/1, GigabitEthernet1/0/3
+        elif ',' in vlan_interface_starting:
+            interfaces = [iface.strip() for iface in vlan_interface_starting.split(',')]
+
+         # Handling single interface input
+        else:
+            interfaces.append(vlan_interface_starting.strip())
+
+        for interface in interfaces:
+            commands = [f"interface {interface}",f"switchport access vlan {vlan_interface}","no shutdown"]
+            output = netmiko_connection.send_config_set(commands)        ##sending netmiko commands to the device
+            print(output)
+
+    except Exception as e:
+        print(Text_File.exception_text["common_function_exception"],e)
+
 ##Configure the vlan
-def configure_vlan(*args)->any:
+def configure_vlan_menu(*args)->any:
     netmiko_connection = args[3]            ##netmiko object
     configure_handler_details = {"1":create_vlan,"2":delete_vlan}       ##Configure vlan handler details
     try:
@@ -76,8 +129,8 @@ def configure_vlan(*args)->any:
         print(Text_File.exception_text["common_function_exception"],e)
 
 
-handler_details ={"1":show_vlan_details,"2":configure_vlan}        ##Handlers
-menu_item = ["Show Vlan","Configure Vlan"] ##Menu items List
+handler_details ={"1":show_vlan_details,"2":configure_vlan_menu,"3":allocate_interface}        ##Handlers
+menu_item = ["Show Vlan","Configure Vlan","Allocate Interface to Vlan"] ##Menu items List
       
 def Configure_Vlan(netmiko_connection):          ##Getting the args
     try:
