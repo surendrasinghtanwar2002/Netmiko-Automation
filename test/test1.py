@@ -22,3 +22,6 @@ try:
 
 except Exception as e:
     print(f"Error occurred: {e}")
+
+
+all_output+= f"Your All Commands Output".center(shutil.get_terminal_size().columns) +"\n" +output

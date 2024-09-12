@@ -2,7 +2,9 @@ from assets.text_file import Text_File
 from tabulate import tabulate
 from automation.scripts.cisco_script.Configure_Interface import configuration_menu,dynamic_match
 import re
-##Show vlan_details
+import shutil
+
+##Show vlan_details Menu
 def show_vlan_details(*args)->str:
     vlan_details = args[2]
     try:    
@@ -23,7 +25,7 @@ def show_vlan_details(*args)->str:
 
 ##list items of the menu
 def vlan_configuration_menu()->None:
-    vlan_configuration_menu = ["Create Vlan","Delete Vlan","Exit"]
+    vlan_configuration_menu = ["Create Vlan","Delete Vlan","Assigned Interface to Vlan"]
     try:
         for sequence,vlan_menu in enumerate(vlan_configuration_menu,start=1):
             print(f"({sequence}) {vlan_menu}")
@@ -41,6 +43,7 @@ def create_vlan(*args)->None:
             output = netmiko_connection.send_config_set(vlan_no_command)
             print(output)
         return(f"Your total vlan have been created {user_vlan_ending_range-user_vlan_starting_range}")
+    
     except ValueError as value:
         print(Text_File.exception_text["value_error"],value)
     except Exception as e:
@@ -80,9 +83,9 @@ def interface_details_print(netmiko_connection):
         print(Text_File.exception_text["common_function_exception"])
 
 ##Allocate Interface to the vlan
-def allocate_interface(*args)->None:
+def allocate_interface(*args)->str:
     try:
-        netmiko_connection = args[3]
+        netmiko_connection = args[2]
         interface_details_print(netmiko_connection)             ##This will print the interface details
         print(Text_File.common_text["Interface_Details"])
         vlan_interface_starting = input(Text_File.common_text["vlan_interface_starting"])
@@ -96,26 +99,45 @@ def allocate_interface(*args)->None:
             for i in range(start, end + 1):
                 interfaces.append(f"{prefix}/{i}")
 
-            # Handling specific interfaces like GigabitEthernet1/0/1, GigabitEthernet1/0/3
+        # Handling specific interfaces like GigabitEthernet1/0/1, GigabitEthernet1/0/3
         elif ',' in vlan_interface_starting:
             interfaces = [iface.strip() for iface in vlan_interface_starting.split(',')]
-
-         # Handling single interface input
+        # Handling single interface input
         else:
             interfaces.append(vlan_interface_starting.strip())
 
+        all_output = ""
         for interface in interfaces:
             commands = [f"interface {interface}",f"switchport access vlan {vlan_interface}","no shutdown"]
             output = netmiko_connection.send_config_set(commands)        ##sending netmiko commands to the device
-            print(output)
+            print(output)                                                ##used for debugging purpose
+            all_output+= output
+        return f"Your All Commands Output".center(shutil.get_terminal_size().columns,"!") +"\n" +all_output
+        
+    except Exception as e:
+        print(Text_File.exception_text["common_function_exception"],__name__,e)
+
+##Allocate Ip to the vlan interface
+def configure_vlan_ip(*args)->str:
+    try:
+        netmiko_connection = args[3]
+        show_vlan_details(*args)
+        print(Text_File.common_text["Interface_Details"])
+        vlan_no = int(input("Please Enter your Vlan Number from the above list (eg. 10,20,30):- "))
+        ip_address = input("Please Enter your Ip Address eg:(192.168.1.1):- ").strip()
+        subnet_mask = input("Please Enter your Subnet Mask:-").strip()
+        commands = [f"vlan {vlan_no}",f"ip address {ip_address + " " + subnet_mask}"]
+        output = netmiko_connection.send_config_set(commands)
+        print(output)
+        return output
 
     except Exception as e:
         print(Text_File.exception_text["common_function_exception"],e)
 
-##Configure the vlan
+##Vlan Configuration Menu
 def configure_vlan_menu(*args)->any:
-    netmiko_connection = args[3]            ##netmiko object
-    configure_handler_details = {"1":create_vlan,"2":delete_vlan}       ##Configure vlan handler details
+    netmiko_connection = args[3]                                        ##netmiko object
+    configure_handler_details = {"1":create_vlan,"2":delete_vlan,"3":allocate_interface}       ##Configure vlan handler details
     try:
         if show_vlan_details(*args):
             user_choice = input(Text_File.common_text["vlan_configuration_permission"]).strip().lower()
@@ -129,9 +151,12 @@ def configure_vlan_menu(*args)->any:
         print(Text_File.exception_text["common_function_exception"],e)
 
 
-handler_details ={"1":show_vlan_details,"2":configure_vlan_menu,"3":allocate_interface}        ##Handlers
-menu_item = ["Show Vlan","Configure Vlan","Allocate Interface to Vlan"] ##Menu items List
-      
+handler_details ={"1":show_vlan_details,"2":configure_vlan_menu}        ##Main Menu Handlers
+menu_item = ["Show Vlan","Configure Vlan","Exit"]                       ##Main Menu Items list
+
+
+
+##main Menu Function
 def Configure_Vlan(netmiko_connection):          ##Getting the args
     try:
         vlan_info = netmiko_connection.send_command("show vlan",use_textfsm=True)
