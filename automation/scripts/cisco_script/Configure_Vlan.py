@@ -54,6 +54,7 @@ def create_vlan(*args)->None:
     
     except ValueError as value:
         print(Text_File.exception_text["value_error"],value)
+
     except Exception as e:
         print(Text_File.exception_text["common_function_exception"],e)
 
@@ -68,11 +69,13 @@ def delete_vlan(*args)->None:
             output = netmiko_connection.send_config_set(vlan_no_command)
             print(output)
         return(f"Your total vlan have been deleted {user_vlan_ending_range-user_vlan_starting_range}")
+    
+
     except Exception as e:
         print(Text_File.exception_text["common_function_exception"],e)
 
 ##Interface Details Function
-def interface_details_print(netmiko_connection):
+def interface_details_print(netmiko_connection)->None:
     try:
         table_data = []
         header = ["Interface Name","Ip Address","Status","Prototype"]
@@ -159,9 +162,8 @@ def configure_vlan_menu(*args)->any:
         print(Text_File.exception_text["common_function_exception"],e)
 
 
-handler_details ={"1":show_vlan_details,"2":configure_vlan_menu}        ##Main Menu Handlers
-menu_item = ["Show Vlan","Configure Vlan","Exit"]                       ##Main Menu Items list
-
+handler_details ={"1":show_vlan_details,"2":configure_vlan_menu}        ## Main Menu Handlers
+menu_item = ["Show Vlan","Configure Vlan","Exit"]                       ## Main Menu Items list
 
 
 ##main Menu Function
