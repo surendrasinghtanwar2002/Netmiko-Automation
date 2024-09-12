@@ -31,6 +31,9 @@ class Text_File:
         "vlan_interface_starting":"Enter the interface range (e.g., GigabitEthernet1/0/1-5 or GigabitEthernet1/0/1):-",
         "vlan_interface":"Enter your vlan number:-",
         "Interface_Details":"From the above Interface Details Please Select Proper Range \n".center(shutil.get_terminal_size().columns),
+        "vlan_create_range":"Specify your range of vlan (eg:-1,2,3,4,5,6):-",
+        "vlan_no_input":"Enter Single Vlan no only (eg: 1,10,20):-",
+        "vlan_no_section_banner":" You have selected ".center(shutil.get_terminal_size().columns,"*")
     }
     ##common text
     exception_text ={

@@ -1,0 +1,5 @@
+configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+SW3(config)#vlan 60
+SW3(config-vlan)#end
+SW3#

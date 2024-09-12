@@ -1,0 +1,11 @@
+configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+SW3(config)#vlan 20
+SW3(config-vlan)#ip address 192.168.1.60 255.255.255.0
+                 ^
+% Invalid input detected at '^' marker.
+
+SW3(config-vlan)#no shut
+%VLAN 20 is not shutdown.
+SW3(config-vlan)#end
+SW3#

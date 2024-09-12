@@ -25,24 +25,32 @@ def show_vlan_details(*args)->str:
 
 ##list items of the menu
 def vlan_configuration_menu()->None:
-    vlan_configuration_menu = ["Create Vlan","Delete Vlan","Assigned Interface to Vlan"]
+    vlan_configuration_menu = ["Create Vlan","Delete Vlan","Assigned Interface to Vlan","Configure Vlan IP Address"]
     try:
         for sequence,vlan_menu in enumerate(vlan_configuration_menu,start=1):
             print(f"({sequence}) {vlan_menu}")
     except Exception as e:
-        print(Text_File.exception_text["common_function_exception"])
+        print(Text_File.exception_text["common_function_exception"],e)
 
 ##Create Vlan Function
 def create_vlan(*args)->None:
     try:
         netmiko_connection = args[2]
-        user_vlan_starting_range = int(input(Text_File.common_text["vlan_starting_range"]))
-        user_vlan_ending_range = int(input(Text_File.common_text["vlan_ending_range"]))
-        for vlanno in range(user_vlan_starting_range,user_vlan_ending_range+1):
-            vlan_no_command = [f"vlan {vlanno}"]            ##passing a command for the execution
-            output = netmiko_connection.send_config_set(vlan_no_command)
-            print(output)
-        return(f"Your total vlan have been created {user_vlan_ending_range-user_vlan_starting_range}")
+        ##taking user choice for creating the vlan
+        user_vlan_choice = int(input(Text_File.common_text["vlan_create_range"]))
+        if user_vlan_choice == 1:
+            user_vlan = int(input(Text_File.common_text["vlan_no_input"]))
+            single_vlan = netmiko_connection.send_config_set(f"vlan {user_vlan}")
+            return single_vlan
+        ##taking multiple user choice
+        else:
+            user_vlan_starting_range = int(input(Text_File.common_text["vlan_starting_range"]))
+            user_vlan_ending_range = int(input(Text_File.common_text["vlan_ending_range"]))
+            for vlanno in range(user_vlan_starting_range,user_vlan_ending_range+1):
+                vlan_no_command = [f"vlan {vlanno}"]            ##passing a command for the execution
+                output = netmiko_connection.send_config_set(vlan_no_command)
+                print(output)
+            return(f"Your total vlan have been created {user_vlan_ending_range-user_vlan_starting_range}")
     
     except ValueError as value:
         print(Text_File.exception_text["value_error"],value)
@@ -93,7 +101,7 @@ def allocate_interface(*args)->str:
         interfaces = []         ##interfaces name
         range_pattern = re.match(r"([a-zA-Z]*[a-zA-Z]*)[\d/]+/(\d+-\d+)", vlan_interface_starting)  ##Pattern Matching GigabitEthernet1/0/1-5
         if range_pattern:
-            basename = vlan_interface_starting.split("/") [0]               ##it will split the base Interface Name with
+            # basename = vlan_interface_starting.split("/") [0]               ##it will split the base Interface Name with
             start, end = map(int, range_pattern.group(2).split('-'))
             prefix = vlan_interface_starting.rsplit('/', 1)[0]
             for i in range(start, end + 1):
@@ -118,15 +126,15 @@ def allocate_interface(*args)->str:
         print(Text_File.exception_text["common_function_exception"],__name__,e)
 
 ##Allocate Ip to the vlan interface
-def configure_vlan_ip(*args)->str:
+def configure_vlan_ip(*args)->str:                              ##Still not working 
     try:
-        netmiko_connection = args[3]
+        netmiko_connection = args[2]
         show_vlan_details(*args)
         print(Text_File.common_text["Interface_Details"])
         vlan_no = int(input("Please Enter your Vlan Number from the above list (eg. 10,20,30):- "))
         ip_address = input("Please Enter your Ip Address eg:(192.168.1.1):- ").strip()
         subnet_mask = input("Please Enter your Subnet Mask:-").strip()
-        commands = [f"vlan {vlan_no}",f"ip address {ip_address + " " + subnet_mask}"]
+        commands = [f"vlan {vlan_no}",f"ip address {ip_address+ " " +subnet_mask}","no shut"]
         output = netmiko_connection.send_config_set(commands)
         print(output)
         return output
@@ -137,7 +145,7 @@ def configure_vlan_ip(*args)->str:
 ##Vlan Configuration Menu
 def configure_vlan_menu(*args)->any:
     netmiko_connection = args[3]                                        ##netmiko object
-    configure_handler_details = {"1":create_vlan,"2":delete_vlan,"3":allocate_interface}       ##Configure vlan handler details
+    configure_handler_details = {"1":create_vlan,"2":delete_vlan,"3":allocate_interface,"4":configure_vlan_ip}       ##Configure vlan handler details
     try:
         if show_vlan_details(*args):
             user_choice = input(Text_File.common_text["vlan_configuration_permission"]).strip().lower()
