@@ -127,39 +127,71 @@ def pagp_connection(connection: object)->None:
 
 
                                                         ## Lacp Configuration All Function ##
-
 ##Function used to configure the fast mode and slow mode
 def lacp_Fast_Mode_configuration():
     try:
         print("In this section we will perform the lacp fast mode configuration")
+
     except Exception as e:
         print(Text_File.exception_text["common_function_exception"],e)
 
 ##Function use to set the system priority to choose the portchannel master switch
-def lacp_System_Priority():
+def lacp_System_Priority(netmiko_connection):
     try:
         print("In this section we will perform the lacp system priority configuration")
+        result = netmiko_connection.send_command("show lacp sys-id")
+        print(f"This is your system priority value \n {result}")
+        user_choice = input("Do you wan;t to make changes in priority (Yes/No):- ").strip().lower()
+        if user_choice == "yes":
+            user_system_priority = int(input("Enter your system priority (eg: 1,3,5,7):-".strip()))
+            result = netmiko_connection.send_command(f"lacp system-priority {user_system_priority}")
+            return result               ##simply return the system command output
     except Exception as e:
         print(Text_File.exception_text["common_function_exception"],e)
 
 ##Function use to set the interface priority 
-def lacp_interface_priority():
+def lacp_interface_priority(netmiko_connection):
     try:
-        print("In this section we will perform the lacp interface priortiy by default 128")
+        print(f"-------------->{netmiko_connection} <-------------")
+        print("We are working on that we will inform you whenever this functionalities get completed")
+            
     except Exception as e:
         print(Text_File.exception_text["common_function_exception"])
 
 ##Function use to set Port Channel Member Interfaces Maximum Number
-def port_channel_max_interface():
+def port_channel_max_interface(netmiko_connection):
     try:
-        print("In this section we will decide what is maximum interface which will participate in the function")
+        print(f"Netmiko Connection object status {netmiko_connection}")         ###used for debugging purpose only
+        print("Wait we are loding the interface details choose your interface and apply the configuration.....")
+        sleep(2)                ##sleeper for 2 seconds
+        interface_details(netmiko_connection)
+        user_interface_name = input("Enter your interface name from the above list:- ").strip()
+        user_interface_value = int(input("Enter your max number to be allocated to port channel:- ").strip())
+        if user_interface_name and user_interface_value:
+            print("You'r Details are valid please wait we are confirming with the device")
+            sleep(2)            ##Sleeper for 2 second
+            commands = [f"interface {user_interface_name}",f"lacp max-bundle {user_interface_value}"]
+            result = netmiko_connection.send_config_set(commands)
+            return result           ##simply returning the result
+
     except Exception as e:
         print(Text_File.exception_text["common_function_exception"],e)
 
 ##Function use to set Port Channel Member Interface Minimum Number
-def port_channel_min_interface():
+def port_channel_min_interface(netmiko_connection):
     try:
-        print("In this section we will decide that what is minimum interface will participate in the function")
+        print(f" Netmiko connection object status {netmiko_connection} ".center(120,"*"))
+        print("Wait we are loding the interface details choose your interface and apply the configuration.....")
+        sleep(2)                ##sleeper for 2 seconds
+        interface_details(netmiko_connection)
+        user_interface_name = input("Enter your interface name from the above list:- ").strip()
+        user_interface_value = int(input("Enter your max number to be allocated to port channel:- ").strip())
+        if user_interface_name and user_interface_value:
+            print("Your details are valid please wait we are confirming with the device")
+            sleep(2)                ##sleeper for 2 seconds
+            commands = [f"interface {user_interface_name}",f"lacp max-bundle {user_interface_value}"]
+            result = netmiko_connection.send_config_set(commands)
+            return result           ##simply returning the result
     except Exception as e:
         print(Text_File.exception_text["common_function_exception"],e)
 
@@ -184,7 +216,7 @@ def lacp_configuration(connection: object)->None:
             if next_menu_permission == "yes":
                 menu_renderer(data=all_menu_items_list.etherchannel_menu_items)
                 user_key = input("Enter your choice from the above list:- ").strip().lower()
-                handlerfunction(key=user_key)
+                handlerfunction(key=user_key,handler_functions_list=lacp_handler_items,connection=connection)
         else:
             result = interface_validation()
             print(result)
