@@ -27,4 +27,4 @@ def main(connection:object)->None:
 
 ##Calling the Main Function
 if __name__ == "__main__":
-    main()
+    result = main()

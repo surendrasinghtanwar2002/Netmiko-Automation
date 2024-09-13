@@ -179,8 +179,8 @@ def Configure_Vlan(netmiko_connection):          ##Getting the args
         print(f"This is the exception of the function",e)
    
 ##Main Function
-def main(netmiko_connection):
-    return Configure_Vlan(netmiko_connection)
+def main(connection):
+    return Configure_Vlan(connection)
 
 ##Calling the Main Function
 if __name__ == "__main__":

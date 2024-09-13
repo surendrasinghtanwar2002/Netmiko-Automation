@@ -62,8 +62,6 @@ class ConnectionTypeMenu:
         return False
 
     def connection_display_menu(self):
-        while True:
-            self.menu_utils.display_menu(self.menu_items)
-            user_choice = self.menu_utils.get_user_choice(self.script_action)
-            if self.script_action.get(user_choice)():
-                break
+        self.menu_utils.display_menu(self.menu_items)
+        user_choice = self.menu_utils.get_user_choice(self.script_action)
+        self.script_action.get(user_choice)()
