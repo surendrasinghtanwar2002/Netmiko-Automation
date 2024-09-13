@@ -4,6 +4,7 @@ from tabulate import tabulate
 import all_menu_items_list
 from time import sleep
 import re
+import shutil
                     ## This function is used to render the Menu Items
 def menu_renderer(data:list|str)->None:
     try:
@@ -13,7 +14,7 @@ def menu_renderer(data:list|str)->None:
         print(Text_File.exception_text["common_function_exception"],e)
 
                     ## This function is used to handle menu all configuration functions
-def handlerfunction(key,handler_functions_list,connection):
+def handlerfunction(key:str,handler_functions_list:dict,connection:object):
     try:
         handler_connection = handler_functions_list.get(key,exitmenu)       ##In this section if key is not able to find then exit menu will run
         result = handler_connection(connection)
@@ -74,9 +75,8 @@ def interface_details(netmiko_connection: object)->None:
     except Exception as e:
         print(Text_File.exception_text["common_function_exception"],e)
 
-
-##interface configuration
-def interface_configuration():
+##interface configuration function
+def interface_validation()->list["str"]:
     try:
         user_interfaces = input("Enter your interface_range from the above list:- ")
         interfaces = []             ##interfaces_details
@@ -95,31 +95,98 @@ def interface_configuration():
     except Exception as e:
         print(f"This is the exception",e)
 
-##Pagp Configuration
-def pagp_connection(netmiko_connection: object)->None:
+def channel_group_configuration(netmiko_connection,interfaces_items,user_mode_selection):
     try:
-        user_input = input("Do you want to print the Interface Details:- ").strip().lower()
+        print(f"Yes we have received the netmiko object {netmiko_connection}")
+        user_group_no = int(input("Enter your group number (eg:- 1,10,20,30):-").strip())
+
+        commands = [f"interface {interfaces_items}",f"channel-group {user_group_no} mode {user_mode_selection}"]
+        result = netmiko_connection.send_config_set(commands)
+        return result
+    except Exception as e:
+        print(f"Yes we have an exception in our function",e)
+
+##Pagp Configuration
+def pagp_connection(connection: object)->None:
+    try:
+        user_input = input("Do you want to print the Interface Details (Yes/No):- ").strip().lower()
         if user_input == "yes":
             interface_details()
-            result = interface_configuration()
-            print(result)
+            interfaces = interface_validation()             ##Interface validation have return the interfaces
+            print(f"-----------> {interfaces} <----------")
+            user_mode = input("Enter your configuration mode: (Auto/Desirable)").strip().lower()
+            result = channel_group_configuration(netmiko_connection=connection,interfaces_items=interfaces,user_mode_selection=user_mode)
+            return result
         else:
-            result = interface_configuration()
-            print(result)
-
+            interfaces = interface_validation()
+            print(f"-----------> {interfaces} <----------")
+            result = channel_group_configuration(netmiko_connection=connection,interfaces_items=interfaces)
+            return result
     except Exception as e:
         print(Text_File.exception_text["common_function_exception"],e)
 
+
+                                                        ## Lacp Configuration All Function ##
+
+##Function used to configure the fast mode and slow mode
+def lacp_Fast_Mode_configuration():
+    try:
+        print("In this section we will perform the lacp fast mode configuration")
+    except Exception as e:
+        print(Text_File.exception_text["common_function_exception"],e)
+
+##Function use to set the system priority to choose the portchannel master switch
+def lacp_System_Priority():
+    try:
+        print("In this section we will perform the lacp system priority configuration")
+    except Exception as e:
+        print(Text_File.exception_text["common_function_exception"],e)
+
+##Function use to set the interface priority 
+def lacp_interface_priority():
+    try:
+        print("In this section we will perform the lacp interface priortiy by default 128")
+    except Exception as e:
+        print(Text_File.exception_text["common_function_exception"])
+
+##Function use to set Port Channel Member Interfaces Maximum Number
+def port_channel_max_interface():
+    try:
+        print("In this section we will decide what is maximum interface which will participate in the function")
+    except Exception as e:
+        print(Text_File.exception_text["common_function_exception"],e)
+
+##Function use to set Port Channel Member Interface Minimum Number
+def port_channel_min_interface():
+    try:
+        print("In this section we will decide that what is minimum interface will participate in the function")
+    except Exception as e:
+        print(Text_File.exception_text["common_function_exception"],e)
+
+
+##lacp handler function mapper list
+lacp_handler_items = {"1":lacp_Fast_Mode_configuration,"2":lacp_System_Priority,"3":lacp_interface_priority,"4":port_channel_max_interface,"5":port_channel_min_interface}
+
+
 ##Lacp Configuration
-def lacp_configuration(netmiko_connection: object)->None:
+def lacp_configuration(connection: object)->None:
     try:
         user_input = input("Do you want to print the Interface Details:- ").strip().lower()
         if user_input == "yes":
             interface_details()
-            result = interface_configuration()
-            print(result)
+            interfaces = interface_validation()
+            print(f"-----------> {interfaces} <----------")
+            user_mode = input("Enter your configuration mode: (Active/Passive)").strip().lower()
+            result = channel_group_configuration(netmiko_connection=connection,interfaces_items=interfaces,user_mode_selection=user_mode)
+            print(" Your configuration have been configured succesfully ".center(shutil.get_terminal_size().columns,"!"))
+            print(f"\n{result}")
+            next_menu_permission = input("Do you want to configure Additional Properties of Lacp:- ").strip().lower()
+            if next_menu_permission == "yes":
+                menu_renderer(data=all_menu_items_list.etherchannel_menu_items)
+                user_key = input("Enter your choice from the above list:- ").strip().lower()
+                handlerfunction(key=user_key)
         else:
-            result = interface_configuration()
+            result = interface_validation()
             print(result)
 
     except Exception as e:

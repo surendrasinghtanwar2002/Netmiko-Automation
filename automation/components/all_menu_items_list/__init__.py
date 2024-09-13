@@ -1,1 +1,1 @@
-from all_menu_list_items import etherchannel_menu_items
+from all_menu_list_items import etherchannel_menu_items,lacp_configuration_menu_items
