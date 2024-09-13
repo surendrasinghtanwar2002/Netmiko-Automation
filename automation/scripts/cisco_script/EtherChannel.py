@@ -1,18 +1,20 @@
 
 from assets.text_file import Text_File
-import components.all_menu_items_list as menuitems
-import components.etherchannel_functions as etherchannelfunction
+import automation.components.etherchannel_functions as modules
 import sys
 
-handlerfunction_items = {"1":etherchannelfunction.show_etherchannel_details,"2":etherchannelfunction.configure_etherchannel,"3":etherchannelfunction.exitmenu}
+handlerfunction_items = {"1":modules.etherchannel_functions.show_etherchannel_details,"2":modules.etherchannel_functions.configure_etherchannel,"3":modules.etherchannel_functions.exitmenu}
+
+
+etherchannel_menu_items = ["Show EtherChannel","Configure EtherChannel","Exit"]
 
 ##EtherChannel Function
 def Etherchannel(netmiko_connection)->None:
     try:
         print("Here we will call the menu rendered function")
-        etherchannelfunction.menu_renderer(data=menuitems.etherchannel_menu_items)
+        modules.etherchannel_functions.menu_renderer(data=etherchannel_menu_items)  ##need to change
         handler_key = input(Text_File.common_text["user_choice_no"])
-        result = etherchannelfunction.handlerfunction(key=handler_key,handler_functions_list=handlerfunction_items,connection = netmiko_connection)
+        result = modules.etherchannel_functions.handlerfunction(key=handler_key,handler_functions_list=handlerfunction_items,connection = netmiko_connection)
         if result:
             return result       ##If result is True
         else:

@@ -1,11 +1,16 @@
 from assets.text_file import Text_File
 import sys
 from tabulate import tabulate
-import all_menu_items_list
 from time import sleep
 import re
 import shutil
-                    ## This function is used to render the Menu Items
+         
+         
+         ##EtherChannel Menu Items
+etherchannel_menu_items = ["Show EtherChannel","Configure EtherChannel","Exit"]
+
+lacp_configuration_menu_items = ["LACP Fast Mode","LACP System Priority","LACP Interface Priority","Port Channel Member Interfaces Maximum Number","Port Channel Member Interfaces Minimum Number"]
+           ## This function is used to render the Menu Items
 def menu_renderer(data:list|str)->None:
     try:
         for sequenceno,items in enumerate(data,start=1):
@@ -214,7 +219,7 @@ def lacp_configuration(connection: object)->None:
             print(f"\n{result}")
             next_menu_permission = input("Do you want to configure Additional Properties of Lacp:- ").strip().lower()
             if next_menu_permission == "yes":
-                menu_renderer(data=all_menu_items_list.etherchannel_menu_items)
+                menu_renderer(data=etherchannel_menu_items)
                 user_key = input("Enter your choice from the above list:- ").strip().lower()
                 handlerfunction(key=user_key,handler_functions_list=lacp_handler_items,connection=connection)
         else:
@@ -231,7 +236,7 @@ def configure_etherchannel(netmiko_connection):
     try:
         user_choice = input("Do you want to continue (Yes/No):- ").strip().lower()
         if user_choice == "yes":
-            menu_renderer(data=all_menu_items_list)
+            menu_renderer(data=lacp_configuration_menu_items)
             handler_key = input(Text_File.common_text["user_choice_no"])
             result = handlerfunction(key=handler_key,handler_functions_list=handler_list,connection=netmiko_connection)
             return result
