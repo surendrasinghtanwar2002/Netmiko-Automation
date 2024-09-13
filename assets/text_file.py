@@ -25,6 +25,7 @@ class Text_File:
         "Json_conversion_permission":"Do you want to convert raw data into json",
         "Exit_Permission":"Do you want to exit from the menu (Yes/No):- ",
         "User_choice":"Enter your choice:-",
+        "user_choice_no":"Enter your choice (eg:- 1,2,3):-",
         "vlan_configuration_permission":"Do you want to make configuration in Vlan (Yes/No):-",
         "vlan_starting_range":"Enter your vlan starting range:-",
         "vlan_ending_range":"Enter your vlan ending range:-",
