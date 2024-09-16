@@ -1,9 +1,8 @@
-from automation.depen_container.depen_container import DIContainer
+import automation.menus as menus
 
 def main()->None:
-    container = DIContainer()
-    main_menu = container.get_main_menu()
-    main_menu.display()                 ##Main Display Function
-
+    display = menus.main_menu.Main_Menu()
+    display.display_main_menu()
+    
 if __name__ == "__main__":
     main()

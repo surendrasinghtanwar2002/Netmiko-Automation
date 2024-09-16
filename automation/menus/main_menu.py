@@ -1,53 +1,100 @@
-from automation.menus.connection_type import ConnectionTypeMenu
-## Main Menu Class
-class MainMenu:
-    def __init__(self, menu_utils) -> None:
-        self.menu_utils = menu_utils
-        self.script_action = {
-            "1": self.handle_cisco,
-            "2": self.handle_juniper,
-            "3": self.handle_arista,
-            "4": self.handle_dell,
-            "5": self.default_action
+import sys
+import shutil
+import os
+from time import time
+
+class Main_Menu:
+    def __init__(self, menu_items=None, event_handlers=None) -> None:
+        self.menu_items = menu_items if menu_items else ["Cisco", "Juniper", "Arista", "Exit"]
+        self.event_handlers = event_handlers if event_handlers else {
+            "1": self.cisco_devices,
+            "2": self.juniper_devices,
+            "3": self.arista_devices,
+            "4": self.exit_menu
         }
-        self.menu_items = ["Cisco", "Juniper", "Arista", "Dell"]      
+    @staticmethod
+    def _clear_screen() -> None:
+        try:
+            os.system("cls" if os.name == "nt" else "clear")
+        except OSError as oserror:
+            print(f"OS exception {oserror}")
+        except Exception as e:
+            print(f"Common Exception {e}")
 
-    ##Handler for managing the navigation
-    def go_to_connection_menu(self) -> None:
-        print("Navigating to Connection Menu...")
-        connection_menu = ConnectionTypeMenu(self.menu_utils)
-        connection_menu.connection_display_menu()
+    def _timeexecution(original_function):                                  ##Now this decorator should be seperate in the class
+        def wrapper(*args, **kwargs):
+            try:
+                start_time = time()
+                result = original_function(*args, **kwargs)
+                end_time = time()
+                print(f"Function {original_function.__name__} executed in {end_time - start_time:.2f} seconds")
+                return result
+            except TypeError as type_error:
+                print(f"Type Error {type_error} in function {original_function.__name__}")
+            except Exception as e:
+                print(f"Common Exception {e} in function {original_function.__name__}")
+        return wrapper
 
-    # Define specific functions for each selection
-    def handle_cisco(self)->None:
-        print("Handling Cisco script execution.")   
-        self.go_to_connection_menu()
-        return True
+    @staticmethod
+    def __next_screen() -> None:
+        try:
+            from .connection_type_menu import Connection_type_menu
+            next_display = Connection_type_menu()
+            next_display.display_main_menu()
+        except FileNotFoundError as file_error:
+            print(f'Function: {__name__}, Exception: {type(file_error).__name__}')
 
-    def handle_juniper(self)->None:
-        print("Handling Juniper script execution.")     
-        self.go_to_connection_menu()
-        return True
+    @_timeexecution
+    def cisco_devices(self) -> None:
+        print("Wait a minute we are landing you to Cisco devices main page")
+        self.__next_screen()
 
-    def handle_arista(self)->None:
-        print("Handling Arista script execution.")     
-        self.go_to_connection_menu()
-        return True
+    @_timeexecution
+    def juniper_devices(self) -> None:
+        print("Be available soon")
+        self.__next_screen()
 
-    def handle_dell(self)->None:
-        print("Handling Dell script execution.")        
-        self.go_to_connection_menu()
-        return True
+    @_timeexecution
+    def arista_devices(self) -> None:
+        print("Be available soon")
+        self.__next_screen()
 
-    # Default action if selection is not found (optional)
-    def default_action(self)->None:
-        print("Invalid selection, please try again.")  
-        return True
+    @_timeexecution
+    def exit_menu(self) -> None:
+        user_choice = input("Do you want to quit (Yes/No):-").strip().lower()
+        if user_choice == "yes":
+            sys.exit("Thank you for using the Netmiko Automation Script".center(shutil.get_terminal_size().columns, "!"))
+        else:
+            pass
 
-    # Display Menu  
-    def display(self)->None:
+    @_timeexecution
+    def __render_menu_items(self,menu_items:list) -> None:
+        for seq_no, item in enumerate(menu_items, start=1):
+            print(f"({seq_no}) {item}")
+
+    @_timeexecution
+    def _check_user_choice(self) -> None:
+        user_choice = input("Enter your choice from the above menu:- ").strip()
+        if user_choice in self.event_handlers:
+            return user_choice
+        else:
+            print("Your given input is not presented in the menu")
+
+    @_timeexecution
+    def display_main_menu(self) -> None:
+        self._clear_screen()
         while True:
-            self.menu_utils.display_menu(self.menu_items)
-            choice = self.menu_utils.get_user_choice(self.script_action)
-            if self.script_action.get(choice)():
+            self.__render_menu_items(menu_items=self.menu_items)
+            choice_value = self._check_user_choice()
+            if choice_value:
+                self.event_handlers.get(choice_value)()
                 break
+            else:
+                print("You have given the wrong value here")
+
+def main():
+    obj = Main_Menu()
+    obj.display_main_menu()
+
+if __name__ == "__main__":
+    main()
