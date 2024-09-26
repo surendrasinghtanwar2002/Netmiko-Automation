@@ -19,7 +19,7 @@ class Main_Menu(Text_Style):
         try:
             os.system("cls" if os.name == "nt" else "clear")
         except OSError as oserror:
-            Text_Style.common_text(primary_text=Text_File.exception_text["os exception"],error_text=oserror)
+            Text_Style.common_text(primary_text=Text_File.exception_text["os exception"],secondary_text=oserror,secondary_text_style="bold")
         except Exception as e:
             print(f"Common Exception {e}")
 
@@ -48,18 +48,17 @@ class Main_Menu(Text_Style):
 
     @_timeexecution
     def cisco_devices(self) -> None:
-        print("Wait a minute we are landing you to Cisco devices main page")
         self.__next_screen()
 
     @_timeexecution
     def juniper_devices(self) -> None:
-        print("Be available soon")
-        self.__next_screen()
+        self.common_text(primary_text=Text_File.error_text["wrong_value"],primary_text_color="red",primary_text_style="bold")
+        return False
 
     @_timeexecution
     def arista_devices(self) -> None:
         print("Be available soon")
-        self.__next_screen()
+        return False
 
     @_timeexecution
     def exit_menu(self) -> None:
@@ -72,15 +71,16 @@ class Main_Menu(Text_Style):
     @_timeexecution
     def __render_menu_items(self,menu_items:list) -> None:
         for seq_no, item in enumerate(menu_items, start=1):
-            print(f"({seq_no}) {item}")
+            self.common_text(primary_text=str({seq_no}),primary_text_color="red",primary_text_style="bold",secondary_text=item,secondary_text_color="bright_cyan",secondary_text_style="bold",add_line_break=True)
+            # print(f"({seq_no}) {item}")
 
     @_timeexecution
     def _check_user_choice(self) -> None:
-        user_choice = input("Enter your choice from the above menu:- ").strip()
+        user_choice = input(self.common_text(primary_text=Text_File.common_text["User_choice"],primary_text_color="blue",primary_text_style="bold",add_line_break=False)).strip()
         if user_choice in self.event_handlers:
             return user_choice
         else:
-            print("Your given input is not presented in the menu")
+            self.common_text(primary_text=Text_File.error_text["menu_wrong_input"],primary_text_color="red",primary_text_style="bold")
 
     @_timeexecution
     def display_main_menu(self) -> None:
@@ -92,7 +92,7 @@ class Main_Menu(Text_Style):
                 self.event_handlers.get(choice_value)()
                 break
             else:
-                print("You have given the wrong value here")
+                self.common_text(primary_text=Text_File.error_text["wrong_value"],primary_text_color="red",primary_text_style="bold")
 
 def main():
     obj = Main_Menu()

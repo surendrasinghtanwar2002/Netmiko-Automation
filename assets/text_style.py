@@ -1,5 +1,8 @@
 from rich.console import Console
+from rich.progress import Progress
 from rich.text import Text
+from assets.text_file import Text_File
+# from text_file import Text_File
 
 console = Console()
 
@@ -7,28 +10,47 @@ class Text_Style:
     def __init__(self) -> None:
         pass
     
-    @classmethod
-    def common_text(self, primary_text: str, error_text: str, text_color="black", text_style="normal") -> None:
+    @staticmethod
+    def common_text(primary_text: str = "", secondary_text: str = "", 
+                    primary_text_color="black", primary_text_style="normal", 
+                    secondary_text_color="red", secondary_text_style: str = "normal",add_line_break: bool = True) -> None:
         """
         Function to display two styled texts in the console.
-        
-        Parameters:
-        - primary_text (str): The main text to display.
-        - error_text (str): The error or secondary text to display.
-        - text_color (str): The color of the text. Default is "black".
-        - text_style (str): Additional styles (e.g., "bold", "italic"). Default is "normal".
         """
         # Combine the text color and style into one string
-        style = f"{text_style} {text_color}"
-
+        primary_style = f"{primary_text_style} {primary_text_color}".strip()
+        secondary_style = f"{secondary_text_style} {secondary_text_color}".strip()
+        
         # Create rich text objects for both texts
-        styled_primary = Text(primary_text, style=style)
-        styled_error = Text(error_text, style=style)
+        styled_primary = Text(primary_text, style=primary_style)
+        styled_secondary = Text(secondary_text, style=secondary_style)
+        
+        # Print both texts if both are provided
+        if primary_text and secondary_text:
+            console.print(styled_primary, styled_secondary,end="\n" if add_line_break else "")
+        elif primary_text:
+            console.print(styled_primary,end="\n" if add_line_break else "")
+        elif secondary_text:
+            console.print(styled_secondary,end="\n" if add_line_break else "")
 
-        # Print both styled texts to the console in one line
-        console.print(styled_primary, styled_error)
+        return ""
+    @staticmethod
+    def progress_bar(Progessbar_name:str = Text_File.common_text["loading_data"],Progressbar_time:int=400000,Progressbar_value:int=1):
+        for task_seq in range(Progressbar_value):
+            task_no = f"Task{task_seq}"
+            with Progress() as progress:
+                task_no = progress.add_task(f"[red]{Progessbar_name}...[/]", total=Progressbar_time)
+                while not progress.finished:
+                    progress.update(task_no, advance=0.1)
+                return True
+    
+    def __str__(self) -> str:
+        return Text_File.object_text["text_style"]
 
 # Example usage
-if __name__ == "__main__":
-    text_style = Text_Style()
-    text_style.common_text("This is the exception of the text", "This is an error message.", "red", "bold")
+# if __name__ == "__main__":
+#     text_style = Text_Style()
+#     value = text_style.progress_bar(Progressbar_value=1)
+#     if value:
+#         print("We have done")
+    

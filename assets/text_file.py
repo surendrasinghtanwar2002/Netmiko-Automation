@@ -34,7 +34,8 @@ class Text_File:
         "Interface_Details":"From the above Interface Details Please Select Proper Range \n".center(shutil.get_terminal_size().columns),
         "vlan_create_range":"Specify your range of vlan (eg:-1,2,3,4,5,6):-",
         "vlan_no_input":"Enter Single Vlan no only (eg: 1,10,20):-",
-        "vlan_no_section_banner":" You have selected ".center(shutil.get_terminal_size().columns,"*")
+        "vlan_no_section_banner":" You have selected ".center(shutil.get_terminal_size().columns,"*"),
+        "loading_data":"We are loading the data",
     }
     ##common text
     exception_text ={
@@ -49,10 +50,17 @@ class Text_File:
     error_text = {
         "device_details_error":"!!! You have provided wrong details of the device !!!".center(shutil.get_terminal_size().columns),
         "limit_exceed":"You have reached your limit",
-        "Unsuccessful_File_Creation":"Your File Have not been created"
+        "Unsuccessful_File_Creation":"Your File Have not been created",
+        "wrong_value":"You have provided the wrong value",
+        "menu_wrong_input":"Your given input is not presented in the menu"
     }
     ##debug text
     debug_text = {
         "device_details": "We got the device details",
         "device_respond":"Device is Active".center(shutil.get_terminal_size().columns),
+
+    }
+    ##class object text
+    object_text = {
+        "text_style":"This Class is being used to style the text with various parameter"
     }
