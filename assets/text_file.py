@@ -41,7 +41,8 @@ class Text_File:
         "common_function_exception": "Your function have exception",
         "value_error":"You have passed wrong value",
         "CalledProcessError":"Subprocess Exception occured",
-        "file_not_found":"File not Founded Exception"
+        "file_not_found":"File not Founded Exception",
+        "os exception":"Os exception arrived"
 
     }
     ##error text

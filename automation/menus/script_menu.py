@@ -28,6 +28,7 @@ class Script_Menu(Connection_type_menu):
         items_sequence = len(menu_items)
         return {str(i + 1): self.create_script_action(script_name=menu_items[i]) for i in range(items_sequence)} 
     
+    ##Method for creating the script action and loading module dynamically using the importlib.util module
     def create_script_action(self, script_name: str): 
         def action(connection):
             module_path = os.path.join(self.cisco_script_path, f"{script_name}.py")   
@@ -48,6 +49,7 @@ class Script_Menu(Connection_type_menu):
             return False
         return action
     
+    ##Overiding the main menu of the parent menus
     def display_main_menu(self) -> None:
         while True:
             self.__render_menu_items()

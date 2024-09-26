@@ -2,22 +2,24 @@ import sys
 import shutil
 import os
 from time import time
+from assets.text_file import Text_File
+from assets.text_style import Text_Style
 
-class Main_Menu:
+class Main_Menu(Text_Style):
     def __init__(self, menu_items=None, event_handlers=None) -> None:
         self.menu_items = menu_items if menu_items else ["Cisco", "Juniper", "Arista", "Exit"]
         self.event_handlers = event_handlers if event_handlers else {
             "1": self.cisco_devices,
             "2": self.juniper_devices,
             "3": self.arista_devices,
-            "4": self.exit_menu
+            "4": self.exit_menu         
         }
     @staticmethod
     def _clear_screen() -> None:
         try:
             os.system("cls" if os.name == "nt" else "clear")
         except OSError as oserror:
-            print(f"OS exception {oserror}")
+            Text_Style.common_text(primary_text=Text_File.exception_text["os exception"],error_text=oserror)
         except Exception as e:
             print(f"Common Exception {e}")
 
