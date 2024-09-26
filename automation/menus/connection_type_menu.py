@@ -1,6 +1,7 @@
 ## Connection Type Menu Class ##
 from .main_menu import Main_Menu
 from netmiko import ConnectHandler
+from assets.text_file import Text_File
 from maskpass import advpass, askpass
 import platform
 import subprocess
@@ -111,20 +112,23 @@ class Connection_type_menu(Main_Menu):
     @Main_Menu._timeexecution
     def single_device_connection(self):
         try:
-            print(" Single Device Connection ".center(140, "*"))
-            auth_data = self.__single_device_auth_connection()
-            if auth_data == ("", "", ""):
-                print("Invalid credentials or limit reached.")
-                return
-            
-            device_details = self.device_details_converter(device_details=auth_data)
-            netmiko_connection = ConnectHandler(**device_details)
-            if netmiko_connection:
-                self.netmiko_connection_initializer(new_netmiko_connection=netmiko_connection)  ## Class method to set netmiko object
-                print(netmiko_connection)
-                self.__next_screen()
-            else:
-                print("We are not connected to the device")
+            result = self.progress_bar(Progessbar_name="Loading your Next Screen")
+            if result:
+                self._clear_screen()
+                self.common_text(primary_text=Text_File.common_text["Single_device"],primary_text_color="green")
+                auth_data = self.__single_device_auth_connection()
+                if auth_data == ("", "", ""):
+                    self.common_text(primary_text=Text_File.common_text["invalid_credentials"],primary_text_color="red")
+                    return
+                
+                device_details = self.device_details_converter(device_details=auth_data)
+                netmiko_connection = ConnectHandler(**device_details)
+                if netmiko_connection:
+                    self.netmiko_connection_initializer(new_netmiko_connection=netmiko_connection)  ## Class method to set netmiko object
+                    print(netmiko_connection)
+                    self.__next_screen()
+                else:
+                    print("We are not connected to the device")
         except Exception as e:
             print(f'Function: {__name__}, Exception: {type(e).__name__}')
     

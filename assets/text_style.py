@@ -35,7 +35,7 @@ class Text_Style:
 
         return ""
     @staticmethod
-    def progress_bar(Progessbar_name:str = Text_File.common_text["loading_data"],Progressbar_time:int=400000,Progressbar_value:int=1):
+    def progress_bar(Progessbar_name:str = Text_File.common_text["loading_data"],Progressbar_time:int=100000,Progressbar_value:int=1):
         for task_seq in range(Progressbar_value):
             task_no = f"Task{task_seq}"
             with Progress() as progress:

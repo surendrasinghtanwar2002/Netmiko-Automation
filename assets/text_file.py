@@ -18,13 +18,14 @@ class Text_File:
         "ip_address_range":"Enter Your Ip Address no",
         "validip_banner":"VALID IP ADDRESS".center(shutil.get_terminal_size().columns,"!"),
         "invalidip_banner":"INVALID IP ADDRESS".center(shutil.get_terminal_size().columns,"!"),
+        "invalid_credentials":"Invalid credentials or limit reached.",
         "proceed_confirmation":"Do you want to proceed (Yes/No):-",
         "Data_retrieved":"Succesfully Data have been retrieved".center(shutil.get_terminal_size().columns,"!"),
         "Successful_File_Creation":"Your File Have been created Succesfully".center(shutil.get_terminal_size().columns,"!"),
         "File_save_permission":"Do you want to say to your file (Yes/No):- ",
         "Json_conversion_permission":"Do you want to convert raw data into json",
         "Exit_Permission":"Do you want to exit from the menu (Yes/No):- ",
-        "User_choice":"Enter your choice:-",
+        "User_choice":"Enter your choice:- ",
         "user_choice_no":"Enter your choice (eg:- 1,2,3):-",
         "vlan_configuration_permission":"Do you want to make configuration in Vlan (Yes/No):-",
         "vlan_starting_range":"Enter your vlan starting range:-",
@@ -36,6 +37,9 @@ class Text_File:
         "vlan_no_input":"Enter Single Vlan no only (eg: 1,10,20):-",
         "vlan_no_section_banner":" You have selected ".center(shutil.get_terminal_size().columns,"*"),
         "loading_data":"We are loading the data",
+        "avilable_soon":"This service is under work be avilable soon".center(shutil.get_terminal_size().columns,"*"),
+        "greeting_user":" Thank you for using the netmiko script we are working every day for stable performance ".center(shutil.get_terminal_size().columns,"*"),
+        "Single_device":"Single Device Connection".center(shutil.get_terminal_size().columns,"*"),
     }
     ##common text
     exception_text ={

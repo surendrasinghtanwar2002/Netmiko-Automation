@@ -48,23 +48,25 @@ class Main_Menu(Text_Style):
 
     @_timeexecution
     def cisco_devices(self) -> None:
-        self.__next_screen()
+        result = self.progress_bar(Progessbar_name="Loading your Next Screen")
+        if result:
+            self.__next_screen()
 
     @_timeexecution
     def juniper_devices(self) -> None:
-        self.common_text(primary_text=Text_File.error_text["wrong_value"],primary_text_color="red",primary_text_style="bold")
+        self.common_text(primary_text=Text_File.common_text["avilable_soon"],primary_text_color="red",primary_text_style="bold")
         return False
 
     @_timeexecution
     def arista_devices(self) -> None:
-        print("Be available soon")
+        self.common_text(primary_text=Text_File.common_text["avilable_soon"],primary_text_color="red",primary_text_style="bold")
         return False
 
     @_timeexecution
     def exit_menu(self) -> None:
-        user_choice = input("Do you want to quit (Yes/No):-").strip().lower()
+        user_choice = input(self.common_text(primary_text=Text_File.common_text["Exit_Permission"],primary_text_color="yellow",primary_text_style="bold",add_line_break=False)).strip().lower()
         if user_choice == "yes":
-            sys.exit("Thank you for using the Netmiko Automation Script".center(shutil.get_terminal_size().columns, "!"))
+            sys.exit(self.common_text(primary_text=Text_File.common_text["greeting_user"],primary_text_color="green",primary_text_style="italic",add_line_break=False))
         else:
             pass
 
@@ -72,7 +74,6 @@ class Main_Menu(Text_Style):
     def __render_menu_items(self,menu_items:list) -> None:
         for seq_no, item in enumerate(menu_items, start=1):
             self.common_text(primary_text=str({seq_no}),primary_text_color="red",primary_text_style="bold",secondary_text=item,secondary_text_color="bright_cyan",secondary_text_style="bold",add_line_break=True)
-            # print(f"({seq_no}) {item}")
 
     @_timeexecution
     def _check_user_choice(self) -> None:
