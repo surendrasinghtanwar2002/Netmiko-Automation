@@ -3,7 +3,8 @@ from netmiko import ConnectHandler
 
 class MultipleDeviceConnection:
     def __init__(self, device_details: list) -> None:
-        self.device_details = device_details
+        self.device_details = device_details,
+        self.netmiko_devices_connection = []
         self.commands_list = [
             ["show ip interface brief", "show running-config", "show calendar", "write"],
             ["show ip interface brief", "show running-config", "show calendar", "write"]
@@ -33,7 +34,7 @@ class MultipleDeviceConnection:
 
     def threading_module(self):
         with ThreadPoolExecutor(max_workers=5) as executor:
-            executor.map(self.netmiko_connection, self.device_details)
+            self.netmiko_devices_connection=list(executor.map(self.netmiko_connection, self.device_details))
 
         return self.command_results
 
