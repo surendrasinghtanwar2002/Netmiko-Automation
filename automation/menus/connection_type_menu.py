@@ -119,8 +119,8 @@ class Connection_type_menu(Main_Menu):
                 auth_data = self.__single_device_auth_connection()
                 if auth_data == ("", "", ""):
                     self.common_text(primary_text=Text_File.common_text["invalid_credentials"],primary_text_color="red")
-                    return
-                
+                    return 
+   
                 device_details = self.device_details_converter(device_details=auth_data)
                 netmiko_connection = ConnectHandler(**device_details)
                 if netmiko_connection:
