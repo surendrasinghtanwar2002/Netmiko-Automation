@@ -3,12 +3,13 @@ from .main_menu import Main_Menu
 from netmiko import ConnectHandler
 from assets.text_file import Text_File
 from maskpass import advpass, askpass
+from .Multiple_device_connection import MultipleDeviceConnection
 import platform
 import subprocess
 import shutil
 import os
 
-class Connection_type_menu(Main_Menu):
+class Connection_type_menu(Main_Menu,MultipleDeviceConnection):
     device_type = "cisco_ios"  ##Class Attributes
     netmiko_connection = None
 
@@ -136,7 +137,7 @@ class Connection_type_menu(Main_Menu):
     @Main_Menu._timeexecution
     def multiple_device_connection(self):
         try:
-            print("Currently working on this project")
+            self.Multiple_Host_connection()
         except Exception as e:
             print(f'Function: {__name__}, Exception: {type(e).__name__}')
     
