@@ -9,7 +9,7 @@ import subprocess
 ##clear screen function
 
 ##single_device_connection_auth
-class Authentication:
+class Authentication(Text_Style):
     def __init__(self) -> None:
         pass
 
@@ -86,17 +86,17 @@ class Authentication:
             print(f'Function: {__name__}, Exception: {type(e).__name__}')
 
 
-    def _multiple_device_auth_data(self) -> list:
-        user_input = int(input(Text_Style.common_text(primary_text=Text_Style.common_text["user_choice_no"])))
+    def multiple_device_auth_data(self) -> list:
+        user_input = int(input(Text_Style.common_text(primary_text=Text_File.common_text["user_choice_no"])))
         counter = 0
         max_counter = 3
         device_details_list = []
         try:
             while counter < max_counter:
                 for i in range(user_input):
-                    device_ip = input(Text_Style.common_text(primary_text=Text_Style.common_text["ip_address_range"])).strip()
-                    device_type = input(Text_Style.common_text(primary_text=Text_Style.common_text["device_type"])).strip().lower()
-                    user_name = input(Text_Style.common_text(primary_text=Text_Style.common_text["username"])).strip()
+                    device_ip = input(Text_Style.common_text(primary_text=Text_File.common_text["ip_address_range"])).strip()
+                    device_type = input(Text_Style.common_text(primary_text=Text_File.common_text["device_type"])).strip().lower()
+                    user_name = input(Text_Style.common_text(primary_text=Text_File.common_text["username"])).strip()
                     user_pass = advpass() if os.name == "nt" else askpass(prompt=Text_File.common_text["password"])
                     
                     if any(" " in x or len(x) == 0 for x in [user_name, user_pass, device_ip, device_type]):
@@ -123,7 +123,7 @@ class Authentication:
             Text_Style.common_text(
                 primary_text=Text_File.exception_text["common_function_exception"],
                 primary_text_style="bold",
-                secondary_text=str(e),
+                secondary_text=e,
                 secondary_text_color="red",
                 secondary_text_style="bold"
             )

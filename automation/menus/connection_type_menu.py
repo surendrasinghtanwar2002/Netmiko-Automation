@@ -90,7 +90,9 @@ class Connection_type_menu(Main_Menu,Authentication):
         try:
             result = self.progress_bar(Progessbar_name="Loading your Next Screen")
             if result:
-                device_details = self._multiple_device_auth_data()                                              ##Return device details in list dictionary
+                print("We have received some things here")
+                device_details = self.multiple_device_auth_data()                                              ##Return device details in list dictionary
+                print(device_details)
                 filtered_devices = filter(self._filter_method, device_details)  # Use filter to get devices with the 'host' key
                 ip_addresses = [device["host"] for device in filtered_devices]  # Extracting IP addresses
                 valid_ip_address = self._ip_address_validation(ip_address=ip_addresses)

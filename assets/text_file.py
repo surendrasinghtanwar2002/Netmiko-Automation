@@ -26,6 +26,7 @@ class Text_File:
         "Successful_File_Creation":"Your File Have been created Succesfully".center(shutil.get_terminal_size().columns,"!"),
         "File_save_permission":"Do you want to say to your file (Yes/No):- ",
         "Json_conversion_permission":"Do you want to convert raw data into json",
+        "successful_state_update":"Netmiko Global State Have been updated succesfully",
         "Exit_Permission":"Do you want to exit from the menu (Yes/No):- ",
         "User_choice":"Enter your choice:- ",
         "user_choice_no":"Enter your choice (eg:- 1,2,3):-",
