@@ -1,12 +1,12 @@
-from .connection_type_menu import Connection_type_menu
+from .main_menu import Main_Menu
 import importlib.util
 import os
 
-class Script_Menu(Connection_type_menu):
+class Script_Menu(Main_Menu):
     def __init__(self) -> None:
         self.menu_items = self.menu_items_list()
         self.script_event_hanlders = self.load_script_actions()
-        super().__init__(menu_items = self.menu_items,event_handlers=self.event_hanlders)
+        super().__init__(menu_items = self.menu_items,event_handlers=self.script_event_hanlders)
     
     ##Method for getting the absolute path for the folder script
     def cisco_script_path(self):                
@@ -60,6 +60,9 @@ class Script_Menu(Connection_type_menu):
                     result = action(self.__class__.netmiko_connection)
                     print(f"This is your result {result}")
                     break
+    
+    def debugger(self):
+        print("Hey bro whatsupp ")
             
         
         

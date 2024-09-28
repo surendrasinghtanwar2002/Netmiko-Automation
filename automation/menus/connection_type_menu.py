@@ -3,7 +3,7 @@ from .main_menu import Main_Menu
 from automation.authentication.common_authentication import Authentication
 from netmiko import ConnectHandler
 from assets.text_file import Text_File
-# from state.global_State_Manger import Global_State_Manager
+from state.global_State_Manger import Global_State_Manager
 from concurrent.futures import ThreadPoolExecutor
 
 
@@ -20,10 +20,13 @@ class Connection_type_menu(Main_Menu,Authentication):
         super().__init__(menu_items= self.connectiontype_menu_items, event_handlers=self.connection_type_event_handlers)
   
     @staticmethod
-    def __next_screen()->None:
-        from script_menu import Script_Menu
-        next__display = Script_Menu()
-        next__display.display_main_menu()
+    def scriptmenu_next_screen()->None:
+        try:
+            from .script_menu import Script_Menu
+            next__display = Script_Menu()
+            next__display.display_main_menu()
+        except Exception as e:
+            print(f"Script menu next screen error {e}")
 
     ## Single device connection method
     def single_device_connection(self):
@@ -31,16 +34,21 @@ class Connection_type_menu(Main_Menu,Authentication):
             result = self.progress_bar(Progessbar_name="Loading your Next Screen")
             if result:
                 self._clear_screen()
-                self.common_text(primary_text=Text_File.common_text["Single_device"],primary_text_color="green")
+                self.common_text(primary_text=Text_File.common_text["Single_device"],primary_text_color="red")
                 auth_data = self._single_device_auth_data()
+                print(f"--------------> This is the auth data of the function {auth_data} <----------------")           ##Debugger
                 if auth_data:
+                    print("You are data is proper we are sending to the server")                                        ##Debugger
                     netmiko_connection = ConnectHandler(**auth_data)
+                    print(f"This is the netmiko connection  object -------------->{netmiko_connection} <--------------------")
                 if netmiko_connection:
-                    self.netmiko_connection_initializer(new_netmiko_connection=netmiko_connection)  ## Class method to set netmiko object
-                    print(netmiko_connection)
-                    self.__next_screen()
-                else:
-                    print("We are not connected to the device")
+                    result = Global_State_Manager.Netmiko_State_Push_Manager(device=netmiko_connection)
+                    if result:
+                        print(f"Your data have been stored succesfully")
+                        self.scriptmenu_next_screen()
+                        
+                # else:
+                #     print("We are not connected to the device")
         except Exception as e:
             print(f'Function: {__name__}, Exception: {type(e).__name__}')
 

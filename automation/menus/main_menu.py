@@ -45,6 +45,7 @@ class Main_Menu(Text_Style):
             next_display.display_main_menu()
         except FileNotFoundError as file_error:
             print(f'Function: {__name__}, Exception: {type(file_error).__name__}')
+            
 
     @_timeexecution
     def cisco_devices(self) -> None:
