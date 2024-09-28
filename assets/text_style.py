@@ -46,11 +46,3 @@ class Text_Style:
     
     def __str__(self) -> str:
         return Text_File.object_text["text_style"]
-
-# Example usage
-# if __name__ == "__main__":
-#     text_style = Text_Style()
-#     value = text_style.progress_bar(Progressbar_value=1)
-#     if value:
-#         print("We have done")
-    

@@ -7,7 +7,9 @@ class Text_File:
     ##common text
     common_text ={
         "connection": "Connected to the host succesfully",
+        "device_type":"Enter your device type (eg. cisco_ios,juniper etc....):- ",
         "connected_host":"Connected to host ",
+        "print_ip_table":"Do you want to print valid ip address table (Yes/No):- ",
         "username":"Enter your Username:-",
         "password":"Enter your Password:-",
         "valid_cred":"Your credentails are in valid order",
@@ -47,7 +49,8 @@ class Text_File:
         "value_error":"You have passed wrong value",
         "CalledProcessError":"Subprocess Exception occured",
         "file_not_found":"File not Founded Exception",
-        "os exception":"Os exception arrived"
+        "os exception":"Os exception arrived",
+        "connection_failed":"Failed to connect the device"
 
     }
     ##error text
@@ -56,7 +59,8 @@ class Text_File:
         "limit_exceed":"You have reached your limit",
         "Unsuccessful_File_Creation":"Your File Have not been created",
         "wrong_value":"You have provided the wrong value",
-        "menu_wrong_input":"Your given input is not presented in the menu"
+        "menu_wrong_input":"Your given input is not presented in the menu",
+        "Unvalid_ip_address":"Your IP Address is not valid",
     }
     ##debug text
     debug_text = {
