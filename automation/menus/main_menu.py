@@ -72,7 +72,7 @@ class Main_Menu(Text_Style):
             pass
 
     @_timeexecution
-    def __render_menu_items(self,menu_items:list) -> None:
+    def _render_menu_items(self,menu_items:list) -> None:
         for seq_no, item in enumerate(menu_items, start=1):
             self.common_text(primary_text=str({seq_no}),primary_text_color="red",primary_text_style="bold",secondary_text=item,secondary_text_color="bright_cyan",secondary_text_style="bold",add_line_break=True)
 
@@ -88,7 +88,7 @@ class Main_Menu(Text_Style):
     def display_main_menu(self) -> None:
         self._clear_screen()
         while True:
-            self.__render_menu_items(menu_items=self.menu_items)
+            self._render_menu_items(menu_items=self.menu_items)
             choice_value = self._check_user_choice()
             if choice_value:
                 self.event_handlers.get(choice_value)()

@@ -1,12 +1,14 @@
 from .main_menu import Main_Menu
+from state.global_State_Manger import Global_State_Manager
 import importlib.util
 import os
 
 class Script_Menu(Main_Menu):
-    def __init__(self) -> None:
+    def __init__(self,menu_items=None, event_handlers=None) -> None:
         self.menu_items = self.menu_items_list()
         self.script_event_hanlders = self.load_script_actions()
-        super().__init__(menu_items = self.menu_items,event_handlers=self.script_event_hanlders)
+        super().__init__(menu_items=menu_items if menu_items else self.menu_items, 
+                 event_handlers=event_handlers if event_handlers else self.script_event_hanlders)
     
     ##Method for getting the absolute path for the folder script
     def cisco_script_path(self):                
@@ -19,7 +21,7 @@ class Script_Menu(Main_Menu):
     def menu_items_list(self) -> list:              ##menu items list
         exclude_items = {"__init__.py", "unwanted_file.py", "__pycache__"}
         dir_list = [item.strip(".py") for item in os.listdir(self.cisco_script_path()) if item not in exclude_items]
-        print(f"Menu items: {dir_list}")  # Debugging statement
+        print(f"Menu items: {Global_State_Manager.Single_Device}")  # Debugging statement
         return dir_list
     
     ##Method for creating a event handler dictionary from the create script actions
@@ -52,7 +54,7 @@ class Script_Menu(Main_Menu):
     ##Overiding the main menu of the parent menus
     def display_main_menu(self) -> None:
         while True:
-            self.__render_menu_items()
+            self._render_menu_items(menu_items=self.menu_items)
             choicevalue = self._check_user_choice()
             if choicevalue:
                 action = self.script_event_hanlders.get(choicevalue)(self)

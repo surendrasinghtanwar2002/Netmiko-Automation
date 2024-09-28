@@ -8,7 +8,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 
 class Connection_type_menu(Main_Menu,Authentication):
-    def __init__(self) -> None:
+    def __init__(self,menu_items=None, event_handlers=None) -> None:
         self.netmiko_devices_connection = []  # A list to store the netmiko device connections
         self.connectiontype_menu_items = ["Single Device Connection", "Multiple Device Connection", "Back to Main Menu", "Exit Menu"]  ## Constructor for the class
         self.connection_type_event_handlers = { 
@@ -17,8 +17,9 @@ class Connection_type_menu(Main_Menu,Authentication):
             "3": self.back_to_main_menu,
             "4": self.exit_menu
         }
-        super().__init__(menu_items= self.connectiontype_menu_items, event_handlers=self.connection_type_event_handlers)
-  
+        super().__init__(menu_items=menu_items if menu_items else self.connectiontype_menu_items, 
+                 event_handlers=event_handlers if event_handlers else self.connection_type_event_handlers)
+
     @staticmethod
     def scriptmenu_next_screen()->None:
         try:
@@ -36,15 +37,19 @@ class Connection_type_menu(Main_Menu,Authentication):
                 self._clear_screen()
                 self.common_text(primary_text=Text_File.common_text["Single_device"],primary_text_color="red")
                 auth_data = self._single_device_auth_data()
-                print(f"--------------> This is the auth data of the function {auth_data} <----------------")           ##Debugger
+                # print(f"--------------> This is the auth data of the function {auth_data} <----------------")           ##Debugger
                 if auth_data:
-                    print("You are data is proper we are sending to the server")                                        ##Debugger
+                    # print("You are data is proper we are sending to the server")                                        ##Debugger
                     netmiko_connection = ConnectHandler(**auth_data)
-                    print(f"This is the netmiko connection  object -------------->{netmiko_connection} <--------------------")
+                    # print(f"This is the netmiko connection  object -------------->{netmiko_connection} <--------------------")
+                    print(f"Before global state value  is {Global_State_Manager.Single_Device}")
                 if netmiko_connection:
                     result = Global_State_Manager.Netmiko_State_Push_Manager(device=netmiko_connection)
                     if result:
-                        self.common_text(primary_text=Text_File.common_text["Device successful_state_update"])
+                        # self.common_text(primary_text=Text_File.common_text["successful_state_update"])
+                        print(f"Before global state value  is {Global_State_Manager.Single_Device}")
+                        print("State have been uploaded succesfuly")
+                        print(f"Now global state value  is {Global_State_Manager.Single_Device}")
                         self.scriptmenu_next_screen()                        
                 else:
                     self.common_text(secondary_text=Text_File.error_text["Device invalid"])
@@ -68,7 +73,7 @@ class Connection_type_menu(Main_Menu,Authentication):
         try:
             with ThreadPoolExecutor(max_workers=5) as executor:
                 self.netmiko_devices_connection = list(executor.map(self.netmiko_connection, device_details))
-                # Global_State_Manager.Netmiko_State_Push_Manager(device=self.netmiko_devices_connection)  # Add connections to global state manager
+                Global_State_Manager.Netmiko_State_Push_Manager(device=self.netmiko_devices_connection)  # Add connections to global state manager
                 return self.netmiko_devices_connection
         except Exception as e:
             self.common_text(
