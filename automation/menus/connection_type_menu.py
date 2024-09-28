@@ -37,11 +37,8 @@ class Connection_type_menu(Main_Menu,Authentication):
                 self._clear_screen()
                 self.common_text(primary_text=Text_File.common_text["Single_device"],primary_text_color="red")
                 auth_data = self._single_device_auth_data()
-                # print(f"--------------> This is the auth data of the function {auth_data} <----------------")           ##Debugger
                 if auth_data:
-                    # print("You are data is proper we are sending to the server")                                        ##Debugger
                     netmiko_connection = ConnectHandler(**auth_data)
-                    # print(f"This is the netmiko connection  object -------------->{netmiko_connection} <--------------------")
                     print(f"Before global state value  is {Global_State_Manager.Single_Device}")
                 if netmiko_connection:
                     result = Global_State_Manager.Netmiko_State_Push_Manager(device=netmiko_connection)

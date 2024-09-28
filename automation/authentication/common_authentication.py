@@ -87,16 +87,16 @@ class Authentication(Text_Style):
 
 
     def multiple_device_auth_data(self) -> list:
-        user_input = int(input(Text_Style.common_text(primary_text=Text_File.common_text["user_choice_no"])))
+        user_input = int(input(Text_Style.common_text(primary_text=Text_File.common_text["user_choice_no"],add_line_break=False)))
         counter = 0
         max_counter = 3
         device_details_list = []
         try:
             while counter < max_counter:
                 for i in range(user_input):
-                    device_ip = input(Text_Style.common_text(primary_text=Text_File.common_text["ip_address_range"])).strip()
-                    device_type = input(Text_Style.common_text(primary_text=Text_File.common_text["device_type"])).strip().lower()
-                    user_name = input(Text_Style.common_text(primary_text=Text_File.common_text["username"])).strip()
+                    device_ip = input(Text_Style.common_text(primary_text=Text_File.common_text["ip_address_range"],add_line_break=False)).strip()
+                    device_type = input(Text_Style.common_text(primary_text=Text_File.common_text["device_type"],add_line_break=False)).strip().lower()
+                    user_name = input(Text_Style.common_text(primary_text=Text_File.common_text["username"],add_line_break=False)).strip()
                     user_pass = advpass() if os.name == "nt" else askpass(prompt=Text_File.common_text["password"])
                     
                     if any(" " in x or len(x) == 0 for x in [user_name, user_pass, device_ip, device_type]):
