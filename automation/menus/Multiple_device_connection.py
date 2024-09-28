@@ -27,6 +27,7 @@ class MultipleDeviceConnection:
                 secondary_text_color="red"
             )
 
+
     def threading_module(self) -> bool:
         try:
             with ThreadPoolExecutor(max_workers=5) as executor:
@@ -40,55 +41,12 @@ class MultipleDeviceConnection:
                 secondary_text_color="red"
             )
 
-    def __multiple_device_auth_data(self) -> list:
-        user_input = int(input(Text_Style.common_text(primary_text=Text_Style.common_text["user_choice_no"])))
-        counter = 0
-        max_counter = 3
-        device_details_list = []
-        try:
-            while counter < max_counter:
-                for i in range(user_input):
-                    device_ip = input(Text_Style.common_text(primary_text=Text_Style.common_text["ip_address_range"])).strip()
-                    device_type = input(Text_Style.common_text(primary_text=Text_Style.common_text["device_type"])).strip().lower()
-                    user_name = input(Text_Style.common_text(primary_text=Text_Style.common_text["username"])).strip()
-                    user_pass = advpass() if os.name == "nt" else askpass(prompt=Text_File.common_text["password"])
-                    
-                    if any(" " in x or len(x) == 0 for x in [user_name, user_pass, device_ip, device_type]):
-                        Text_Style.common_text(
-                            primary_text=Text_File.error_text["wrong_value"],
-                            primary_text_style="bold",
-                            primary_text_color="red"
-                        )
-                        counter += 1
-                    else:
-                        device_details_list.append({
-                            "device_type": device_type,
-                            "host": device_ip,
-                            "username": user_name,
-                            "password": user_pass
-                        })
-                return device_details_list
-            Text_Style.common_text(
-                primary_text=Text_File.error_text["limit_exceed"],
-                primary_text_style="bold",
-                primary_text_color="red"
-            )
-        except Exception as e:
-            Text_Style.common_text(
-                primary_text=Text_File.exception_text["common_function_exception"],
-                primary_text_style="bold",
-                secondary_text=str(e),
-                secondary_text_color="red",
-                secondary_text_style="bold"
-            )
-
     # Method for filtering devices from the list
     @staticmethod
     def __filter_method(device) -> bool:
         return "host" in device
 
-    @staticmethod
-    def __ip_address_validation(ip_address: list) -> list:
+    def _ip_address_validation(ip_address: list) -> list:
         param = '-n' if platform.system().lower() == 'windows' else '-c'
         valid_ip_addresses = []  # valid IP addresses list
         try:

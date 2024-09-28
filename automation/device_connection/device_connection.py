@@ -5,7 +5,7 @@ import subprocess
 import platform
 from assets.text_file import Text_File
 from tabulate import tabulate
-from automation.authentication.authentication import clear
+from automation.authentication.common_authentication import clear
 
 class Device_Connection:
     def __init__(self,USERNAME,PASSWORD,HOST_IP_ADDRESS,PORTNO=22) -> None:
