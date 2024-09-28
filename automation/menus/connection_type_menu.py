@@ -44,11 +44,10 @@ class Connection_type_menu(Main_Menu,Authentication):
                 if netmiko_connection:
                     result = Global_State_Manager.Netmiko_State_Push_Manager(device=netmiko_connection)
                     if result:
-                        print(f"Your data have been stored succesfully")
-                        self.scriptmenu_next_screen()
-                        
-                # else:
-                #     print("We are not connected to the device")
+                        self.common_text(primary_text=Text_File.common_text["Device successful_state_update"])
+                        self.scriptmenu_next_screen()                        
+                else:
+                    self.common_text(secondary_text=Text_File.error_text["Device invalid"])
         except Exception as e:
             print(f'Function: {__name__}, Exception: {type(e).__name__}')
 
