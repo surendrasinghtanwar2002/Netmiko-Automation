@@ -38,7 +38,7 @@ class Main_Menu(Text_Style):
         return wrapper
 
     @staticmethod
-    def __next_screen() -> None:
+    def _next_screen() -> None:
         try:
             from .connection_type_menu import Connection_type_menu
             next_display = Connection_type_menu()
@@ -51,7 +51,7 @@ class Main_Menu(Text_Style):
     def cisco_devices(self) -> None:
         result = self.progress_bar(Progessbar_name="Loading your Next Screen")
         if result:
-            self.__next_screen()
+            self._next_screen()
 
     @_timeexecution
     def juniper_devices(self) -> None:
