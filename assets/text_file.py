@@ -53,7 +53,8 @@ class Text_File:
         "file_not_found":f"File not Founded Exception in {__name__}",
         "os exception":"Os exception arrived",
         "connection_failed":"Failed to connect the device",
-        "type_error":f"Type error found in the your function {__name__}"
+        "type_error":f"Type error found in the your function {__name__}",
+        
 
     }
     ##error text
@@ -64,7 +65,8 @@ class Text_File:
         "wrong_value":"You have provided the wrong value",
         "menu_wrong_input":"Your given input is not presented in the menu",
         "Unvalid_ip_address":"Your IP Address is not valid",
-        "Device invalid":"Device is not reachable"
+        "Device invalid":"Device is not reachable",
+        "Connectivity_Issue":"Please Check your internet connection or device reachability"
     }
     ##debug text
     debug_text = {

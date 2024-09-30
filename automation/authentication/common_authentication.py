@@ -1,4 +1,5 @@
 from maskpass import askpass
+from time import sleep
 from typing import List
 from assets.text_file import Text_File
 from assets.text_style import Text_Style
@@ -14,7 +15,16 @@ import subprocess
 class Authentication(Text_Style):
     def __init__(self) -> None:
         pass
-    
+
+    @staticmethod
+    def sleep(time:int)->None:
+        """
+        Sleep method is used to make delay between two statement
+        Attributes:-
+                     (1) time = int
+        """
+        sleep(time)
+
     @staticmethod
     def clear_screen()->None:
        os.system('cls' if platform.system() == 'Windows' else 'clear')

@@ -70,7 +70,6 @@ class Connection_type_menu(Main_Menu,Authentication):
         try:
             with ThreadPoolExecutor(max_workers=5) as executor:
                 self.netmiko_devices_connection = list(executor.map(self.__netmiko_connection, device_details))
-                Global_State_Manager.Netmiko_State_Push_Manager(device=self.netmiko_devices_connection)  # Add connections to global state manager
                 return self.netmiko_devices_connection
         except Exception as e:
             self.common_text(
@@ -104,27 +103,69 @@ class Connection_type_menu(Main_Menu,Authentication):
     ## Multiple device connection method
     def __multiple_device_connection(self):
         try:
+            # Show progress bar before moving to the next screen
             result = self.progress_bar(Progessbar_name="Loading your Next Screen")
+            
             if result:
-                device_details = self._multiple_device_auth_data()                                              ##Return device details in list dictionary
-                filtered_devices = filter(self.__filter_method, device_details)  # Use filter to get devices with the 'host' key
-                ip_addresses = [device["host"] for device in filtered_devices]  # Extracting IP addresses
+                # Get device details (expected to be a list of dictionaries with 'host' key)
+                device_details = self._multiple_device_auth_data()
+
+                # Filter out devices that have the 'host' key
+                filtered_devices = filter(self.__filter_method, device_details)
+                ip_addresses = [device["host"] for device in filtered_devices]  # Extract IP addresses
+
+                # Validate the extracted IP addresses
                 valid_ip_address = self.ip_address_validation(ip_address=ip_addresses)
+
+                # User input for printing the IP table
                 user_choice = input(self.common_text(primary_text=Text_File.common_text["print_ip_table"])).strip()
-                if user_choice == "yes":
-                    self.Table_View_Ouput(table_header=["Sequence","IP Address"],table_data=valid_ip_address,user_Sequence=True)      ##also need to work here also
-                    valid_host = self.__host_validation(Host_details=device_details,Filtered_Host=valid_ip_address)          ##Method is being used to filtered the host which is responding back to our ping command
-                    result = self.__threading_module(device_details=valid_host)       ##Here we need to work that we need to filter those ip address which is not valid
-                    print(result)
+
+                # If user chooses to print the IP table
+                if user_choice.lower() == "yes":
+                    # Display the table of valid IP addresses
+                    self.Table_View_Output(
+                        table_header=["Sequence", "IP Address"], 
+                        table_data=valid_ip_address, 
+                        user_Sequence=True
+                    )
+                # Validate the hosts that respond back to our ping command
+                valid_host = self.__host_validation(
+                    Host_details=device_details, 
+                    Filtered_Host=valid_ip_address
+                )
+                # Start the threading module to handle connections concurrently
+                result = self.__threading_module(device_details=valid_host)
+                # Check if threading was successful
+                if result:
+                    # Push the established Netmiko connections to the global state manager
+                    Global_State_Manager.Netmiko_State_Push_Manager(device=self.netmiko_devices_connection)
+                    # Delay for 2 seconds to allow the next steps
+                    self.sleep(time=2)
+                    self.next_screen()
                 else:
-                    pass
+                    # Handle connectivity issue
+                    self.common_text(
+                        primary_text=Text_File.error_text["Connectivity_Issue"], 
+                        secondary_text="Error during device connection", 
+                        secondary_text_style="bold"
+                    )
+                    self.sleep(time=2)
+                    self.exit_menu()
+
+            # Handle when the progress bar result is False (or no next screen)
+            else:
+                self.common_text(primary_text="Progress bar failed or was canceled.", secondary_text_style="bold")
+
         except Exception as e:
+            # Catch any exception and handle gracefully
             self.common_text(
-                primary_text=Text_File.exception_text["common_function_exception"],
-                secondary_text=str(e),
-                secondary_text_color="red"
+                primary_text=Text_File.error_text["Connectivity_Issue"], 
+                secondary_text=str(e), 
+                secondary_text_style="bold"
             )
-    
+            self.sleep(time=2)
+            self.exit_menu()
+
     ## Back to main menu method
     def back_to_main_menu(self):
         try:
