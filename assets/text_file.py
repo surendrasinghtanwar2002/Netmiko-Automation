@@ -43,15 +43,17 @@ class Text_File:
         "avilable_soon":"This service is under work be avilable soon".center(shutil.get_terminal_size().columns,"*"),
         "greeting_user":" Thank you for using the netmiko script we are working every day for stable performance ".center(shutil.get_terminal_size().columns,"*"),
         "Single_device":"Single Device Connection".center(shutil.get_terminal_size().columns,"*"),
+        "Work_in_Progress":"Still we are working on this be avilable soon."
     }
     ##common text
     exception_text ={
         "common_function_exception": "Your function have exception",
         "value_error":"You have passed wrong value",
         "CalledProcessError":"Subprocess Exception occured",
-        "file_not_found":"File not Founded Exception",
+        "file_not_found":f"File not Founded Exception in {__name__}",
         "os exception":"Os exception arrived",
-        "connection_failed":"Failed to connect the device"
+        "connection_failed":"Failed to connect the device",
+        "type_error":f"Type error found in the your function {__name__}"
 
     }
     ##error text
