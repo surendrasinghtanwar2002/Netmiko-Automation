@@ -1,6 +1,8 @@
 from maskpass import askpass
+from typing import Tuple, Union,Dict,List
 from assets.text_file import Text_File
 from assets.text_style import Text_Style
+from tabulate import tabulate
 from assets.text_file import Text_File
 import shutil
 import os
@@ -12,13 +14,13 @@ import subprocess
 class Authentication(Text_Style):
     def __init__(self) -> None:
         pass
-
+    
     @staticmethod
-    def clear()->None:
+    def clear_screen()->None:
        os.system('cls' if platform.system() == 'Windows' else 'clear')
 
     @staticmethod       
-    def _ip_address_validation(ip_address: str | list)->list:
+    def ip_address_validation(ip_address: str | list)->list:
         param = '-n' if platform.system().lower() == 'win32' else '-c'
         valid_ip_addresses = []  ## valid IP address list 
         try:
@@ -43,17 +45,23 @@ class Authentication(Text_Style):
         except subprocess.CalledProcessError as processerror:
             print(f'Function: {__name__}, Exception: {type(processerror).__name__}')
             return []
-
+    
+    def printing_valid_ip_address_table(self,host_ip:List[str])->None:         ##Method to print the valid ip address
+        self.clear_screen()         ##Clear Screen Function
+        table_data = []
+        header = ["Sequence","Ip_Address"]
+        for sequence,ip_address in enumerate(host_ip,start=1):
+            table_data.append([sequence,ip_address])
+        print(tabulate(table_data,header,tablefmt="double_outline").center(shutil.get_terminal_size().columns))
 
     def _single_device_auth_data(self) -> tuple[str, str, str]:
         try:
             counter_start = 0
             counter_end = 3
 
-
             while counter_start < counter_end:
                 user_ip_address = input("Enter your IP Address: ")
-                result = self._ip_address_validation(user_ip_address)
+                result = self.ip_address_validation(user_ip_address)
                 
                 if result:
                     self.clear()         ##Calling the clear method
@@ -86,7 +94,7 @@ class Authentication(Text_Style):
             print(f'Function: {__name__}, Exception: {type(e).__name__}')
 
 
-    def multiple_device_auth_data(self) -> list:
+    def _multiple_device_auth_data(self) -> list:
         user_input = int(input(Text_Style.common_text(primary_text=Text_File.common_text["user_choice_no"],add_line_break=False)))
         counter = 0
         max_counter = 3

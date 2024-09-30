@@ -61,7 +61,7 @@ class Connection_type_menu(Main_Menu,Authentication):
                 secondary_text_color="red"
             )
 
-    def threading_module(self,device_details:list) -> bool:
+    def __threading_module(self,device_details:list) -> bool:
         try:
             with ThreadPoolExecutor(max_workers=5) as executor:
                 self.netmiko_devices_connection = list(executor.map(self.netmiko_connection, device_details))
@@ -82,17 +82,15 @@ class Connection_type_menu(Main_Menu,Authentication):
         try:
             result = self.progress_bar(Progessbar_name="Loading your Next Screen")
             if result:
-                print("We have received some things here")
-                device_details = self.multiple_device_auth_data()                                              ##Return device details in list dictionary
-                print(device_details)
+                device_details = self._multiple_device_auth_data()                                              ##Return device details in list dictionary
                 filtered_devices = filter(self._filter_method, device_details)  # Use filter to get devices with the 'host' key
                 ip_addresses = [device["host"] for device in filtered_devices]  # Extracting IP addresses
                 valid_ip_address = self.ip_address_validation(ip_address=ip_addresses)
                 user_choice = input(self.common_text(primary_text=Text_File.common_text["print_ip_table"])).strip()
                 if user_choice == "yes":
-                    self.__printing_valid_ip_address_table(host_ip=valid_ip_address)
-                    self.clear()
-                    result = self.threading_module(device_details=device_details)
+                    self.clear_screen()
+                    self.printing_valid_ip_address_table(host_ip=valid_ip_address)        ##also need to work here also
+                    result = self.__threading_module(device_details=device_details)       ##Here we need to work that we need to filter those ip address which is not valid
                     print(result)
                 else:
                     pass
