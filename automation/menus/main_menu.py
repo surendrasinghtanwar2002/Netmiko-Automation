@@ -81,7 +81,7 @@ class Main_Menu(Text_Style):
             self.common_text(primary_text=str({seq_no}),primary_text_color="red",primary_text_style="bold",secondary_text=item,secondary_text_color="bright_cyan",secondary_text_style="bold",add_line_break=True)
 
     @timeexecution
-    def __check_user_choice(self) -> None:
+    def check_user_choice(self) -> None:
         user_choice = input(self.common_text(primary_text=Text_File.common_text["User_choice"],primary_text_color="blue",primary_text_style="bold",add_line_break=False)).strip()
         if user_choice in self.event_handlers:
             return user_choice
@@ -93,7 +93,7 @@ class Main_Menu(Text_Style):
         self.clear_screen()
         while True:
             self.render_menu_items(menu_items=self.menu_items)
-            choice_value = self.__check_user_choice()
+            choice_value = self.check_user_choice()
             if choice_value:
                 self.event_handlers.get(choice_value)()
                 break

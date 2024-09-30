@@ -20,11 +20,11 @@ class Connection_type_menu(Main_Menu,Authentication):
         super().__init__(menu_items=menu_items if menu_items else self.connectiontype_menu_items, 
                  event_handlers=event_handlers if event_handlers else self.connection_type_event_handlers)
 
-    def next_screen(self)->None:            ##overide the original method
+    def next_screen(self,connectiontype:object | List[object])->None:            ##overide the original method
         try:
             from .script_menu import Script_Menu
             next__display = Script_Menu()
-            next__display.display_main_menu()
+            next__display.display_main_menu(netmiko_type=connectiontype)
         except Exception as e:
             self.common_text(primary_text=Text_File.common_text["common_function_exception"],secondary_text=e,secondary_text_style="bold")
 
@@ -36,13 +36,15 @@ class Connection_type_menu(Main_Menu,Authentication):
                 self.clear_screen()
                 self.common_text(primary_text=Text_File.common_text["Single_device"],primary_text_color="red")
                 auth_data = self._single_device_auth_data()
+                print(f"Checking either auth data is coming or not {auth_data}")                
                 if auth_data:
-                    netmiko_connection = ConnectHandler(**auth_data)
-                if netmiko_connection:
-                    result = Global_State_Manager.Netmiko_State_Push_Manager(device=netmiko_connection)
+                    connection = ConnectHandler(**auth_data)
+                if connection:
+                    result = Global_State_Manager.Netmiko_State_Push_Manager(device=connection)
                     if result:
                         self.common_text(primary_text=Text_File.common_text["successful_state_update"],primary_text_color="green")
-                        self.next_screen()               ## Redirected to next screen ##              
+                        print("we will again retry the function execution".center(120,"]"))
+                        self.next_screen(connectiontype=connection)               ##P assing netmiko connection object  prop        
                 else:
                     self.common_text(secondary_text=Text_File.error_text["Device invalid"])
         except Exception as e:
@@ -136,22 +138,17 @@ class Connection_type_menu(Main_Menu,Authentication):
                     Filtered_Host=valid_ip_address
                 )
 
-                print(f"This is the host validation of the user--------------------------------> {valid_host}")
-
                 # Start the threading module to handle connections concurrently
                 result = self.__threading_module(device_details=valid_host)
                 # Check if threading was successful
                 if result:
                     # Push the established Netmiko connections to the global state manager
-                    print(f"This is the object return by thread module {result}")
                     state_result = Global_State_Manager.Netmiko_State_Push_Manager(device=self.netmiko_devices_connection)
                     if state_result:
-                        self.common_text(primary_text=Text_File.common_text["successful_state_update"],primary_text_color="green")
+                        self.common_text(primary_text=Text_File.common_text["successful_state_update"],primary_text_color="yellow",primary_text_style="bold")
                     # Delay for 2 seconds to allow the next steps
                     self.sleep(time=2)
-                    # self.next_screen()
-
-                    print(Global_State_Manager.Multiple_Device)
+                    self.next_screen(connectiontype = self.netmiko_devices_connection)      ##Passing netmiko connection object list prop
                 else:
                     # Handle connectivity issue
                     self.common_text(

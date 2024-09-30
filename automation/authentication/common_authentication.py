@@ -99,7 +99,7 @@ class Authentication(Text_Style):
                 result = self.ip_address_validation(user_ip_address)
                 
                 if result:
-                    self.clear()         ##Calling the clear method
+                    self.clear_screen()         ##Calling the clear method
                     print(f"Your IP Address is Up {user_ip_address}".center(shutil.get_terminal_size().columns))  
                     device_type = input("Enter your Device Type (cisco_ios,Juniper):- ").strip().lower()
                     user_name = input("Enter Username: ").strip()
