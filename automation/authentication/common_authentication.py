@@ -158,6 +158,7 @@ class Authentication(Text_Style):
                             "username": user_name,
                             "password": user_pass
                         })
+                        Text_Style.common_text(primary_text=Text_File.common_text["device_details_updated"])
                 return device_details_list
             Text_Style.common_text(
                 primary_text=Text_File.error_text["limit_exceed"],

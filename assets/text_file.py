@@ -45,7 +45,8 @@ class Text_File:
         "Single_device":"Single Device Connection".center(shutil.get_terminal_size().columns,"*"),
         "Work_in_Progress":"Still we are working on this be avilable soon.",
         "Multiple_Auth_Data_Range":"Please Enter your number of device you want to configure (eg:- 2,4,6,8,10):- ",
-        "Multiple_connection_greeting":" Welcome to Netmiko Multiple Connection ".center(shutil.get_terminal_size().columns,"*")
+        "Multiple_connection_greeting":" Welcome to Netmiko Multiple Connection ".center(shutil.get_terminal_size().columns,"*"),
+        "device_details_updated":" Your device details have been stored succesfully ".center(shutil.get_terminal_size().columns,"#")
     }
     ##common text
     exception_text ={
