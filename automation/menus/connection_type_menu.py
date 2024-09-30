@@ -88,8 +88,7 @@ class Connection_type_menu(Main_Menu,Authentication):
                 valid_ip_address = self.ip_address_validation(ip_address=ip_addresses)
                 user_choice = input(self.common_text(primary_text=Text_File.common_text["print_ip_table"])).strip()
                 if user_choice == "yes":
-                    self.clear_screen()
-                    self.printing_valid_ip_address_table(host_ip=valid_ip_address)        ##also need to work here also
+                    self.Table_View_Ouput(table_header=["Sequence","IP Address"],table_data=valid_ip_address,user_Sequence=True)      ##also need to work here also
                     result = self.__threading_module(device_details=device_details)       ##Here we need to work that we need to filter those ip address which is not valid
                     print(result)
                 else:

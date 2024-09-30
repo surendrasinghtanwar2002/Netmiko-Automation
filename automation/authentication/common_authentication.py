@@ -1,5 +1,5 @@
 from maskpass import askpass
-from typing import Tuple, Union,Dict,List
+from typing import List
 from assets.text_file import Text_File
 from assets.text_style import Text_Style
 from tabulate import tabulate
@@ -46,13 +46,28 @@ class Authentication(Text_Style):
             print(f'Function: {__name__}, Exception: {type(processerror).__name__}')
             return []
     
-    def printing_valid_ip_address_table(self,host_ip:List[str])->None:         ##Method to print the valid ip address
-        self.clear_screen()         ##Clear Screen Function
-        table_data = []
-        header = ["Sequence","Ip_Address"]
-        for sequence,ip_address in enumerate(host_ip,start=1):
-            table_data.append([sequence,ip_address])
-        print(tabulate(table_data,header,tablefmt="double_outline").center(shutil.get_terminal_size().columns))
+    def Table_View_Ouput(self,table_header:List[str]=None,table_data:List[str]=None,user_Sequence:bool=False,table_Style:str="double_outline")->None:         ##Method to print the valid ip address    
+        """
+        Table View is used to Print the output in table format
+        
+        Attribues:- (1) table_header = List 
+                    (2) table_data = List
+                    (3) User_Sequence =  Bool
+                    (4) table_style = Str
+
+        """    
+        self.table_data = table_data if table_data and isinstance(table_data,list) else [ ]
+        self.header = table_header if table_header and isinstance(table_header,list) else [ ]
+        self.sequence_data = [ ]
+        if user_Sequence:
+            for sequence,ip_address in enumerate(self.table_data,start=1):
+                 self.sequence_data.append([sequence,ip_address])
+            self.clear_screen()
+            Text_Style.common_text(primary_text=tabulate(self.sequence_data,self.header,tablefmt=table_Style),primary_text_color="red")
+            # print(tabulate(self.sequence_data,self.header,tablefmt="double_outline").center(shutil.get_terminal_size().columns))      ##Used in temperorary case
+        else:
+            Text_Style.common_text(primary_text=tabulate(self.table_data,self.header,tablefmt=table_Style),primary_text_color="red")
+            
 
     def _single_device_auth_data(self) -> tuple[str, str, str]:
         try:
