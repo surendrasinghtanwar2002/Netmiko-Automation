@@ -34,7 +34,7 @@ class Connection_type_menu(Main_Menu,Authentication):
             result = self.progress_bar(Progessbar_name="Loading your Next Screen")
             if result:
                 self.clear_screen()
-                self.common_text(primary_text=Text_File.common_text["Single_device"],primary_text_color="red")
+                self.common_text(primary_text=Text_File.common_text["Single_device"],primary_text_color="red",primary_text_style="bold")
                 auth_data = self._single_device_auth_data()
                 print(f"Checking either auth data is coming or not {auth_data}")                
                 if auth_data:

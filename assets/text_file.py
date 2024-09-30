@@ -13,7 +13,7 @@ class Text_File:
         "username":"Enter your Username:- ",
         "password":"Enter your Password:- ",
         "valid_cred":"Your credentails are in valid order",
-        "host_ip_prompt":"Enter your HOST IP ADDRESS:-",
+        "host_ip_prompt":"Enter your HOST IP ADDRESS:- ",
         "mutli_auth_welcome":" Welcome to Multi Device Connection Authentication Page ".center(shutil.get_terminal_size().columns,"!"),
         "same_credentials":"Do you have same credentaisl for all device (Yes/No):-",
         "range_of_ip":"Specify number of device IP Address Range eg:(1,10,15,30,45,50):-",
@@ -42,11 +42,13 @@ class Text_File:
         "loading_data":"We are loading the data",
         "avilable_soon":"This service is under work be avilable soon".center(shutil.get_terminal_size().columns,"*"),
         "greeting_user":" Thank you for using the netmiko script we are working every day for stable performance ".center(shutil.get_terminal_size().columns,"*"),
-        "Single_device":"Single Device Connection".center(shutil.get_terminal_size().columns,"*"),
+        "Single_device":" Single Device Connection ".center(shutil.get_terminal_size().columns,"*"),
         "Work_in_Progress":"Still we are working on this be avilable soon.",
         "Multiple_Auth_Data_Range":"Please Enter your number of device you want to configure (eg:- 2,4,6,8,10):- ",
         "Multiple_connection_greeting":" Welcome to Netmiko Multiple Connection ".center(shutil.get_terminal_size().columns,"*"),
-        "device_details_updated":" Your device details have been stored succesfully ".center(shutil.get_terminal_size().columns,"#")
+        "device_details_updated":" Your device details have been stored succesfully ".center(shutil.get_terminal_size().columns,"#"),
+        "Device_connection_details":" You are connected to device:- ",
+        "valid_ip":"Your Ip Address is valid"
     }
     ##common text
     exception_text ={

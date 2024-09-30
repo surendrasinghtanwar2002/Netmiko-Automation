@@ -95,15 +95,16 @@ class Authentication(Text_Style):
             counter_end = 3
 
             while counter_start < counter_end:
-                user_ip_address = input("Enter your IP Address: ")
+                user_ip_address = input(Text_Style.common_text(primary_text=Text_File.common_text["host_ip_prompt"],primary_text_color="yellow",add_line_break=False)).strip()
                 result = self.ip_address_validation(user_ip_address)
                 
                 if result:
                     self.clear_screen()         ##Calling the clear method
-                    print(f"Your IP Address is Up {user_ip_address}".center(shutil.get_terminal_size().columns))  
-                    device_type = input("Enter your Device Type (cisco_ios,Juniper):- ").strip().lower()
-                    user_name = input("Enter Username: ").strip()
-                    user_pass = advpass() if os.name == "nt" else askpass()
+                    Text_Style.common_text(primary_text=Text_File.common_text["valid_ip"],secondary_text=user_ip_address)
+                    # print(f"Your IP Address is Up {user_ip_address}".center(shutil.get_terminal_size().columns))  
+                    device_type = input(Text_Style.common_text(primary_text=Text_File.common_text["device_type"],primary_text_color="yellow",add_line_break=False)).strip().lower()
+                    user_name = input(Text_Style.common_text(primary_text=Text_File.common_text["username"],primary_text_color="yellow",add_line_break=False)).strip()
+                    user_pass = advpass() if os.name == "nt" else askpass(prompt=Text_File.common_text["password"]) or "hackerzone"
                     if any(" " in x or len(x) == 0 for x in [user_name, user_pass, user_ip_address, device_type]):
                         Text_Style.common_text(
                             primary_text=Text_File.error_text["wrong_value"],

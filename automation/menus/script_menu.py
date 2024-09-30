@@ -1,6 +1,8 @@
 from .main_menu import Main_Menu
 from state.global_State_Manger import Global_State_Manager
+from assets.text_file import Text_File
 import importlib.util
+import shutil
 import os
 
 class Script_Menu(Main_Menu):
@@ -56,10 +58,8 @@ class Script_Menu(Main_Menu):
         try:
             while True:
                 self.clear_screen()
-                if isinstance(netmiko_type,list):
-                    self.common_text(primary_text="You have choosed the multiple connection object")
-                else:
-                    self.common_text(primary_text="You have choosed the single connection object")
+                if isinstance(netmiko_type,object):
+                    self.common_text(primary_text=f"{Text_File.common_text["Device_connection_details"]}{netmiko_type.host} ".center(shutil.get_terminal_size().columns,"#"),primary_text_color="green",primary_text_style="bold")
                 self.render_menu_items(menu_items=self.menu_items)
                 choicevalue = self.check_user_choice()
                 if choicevalue:
