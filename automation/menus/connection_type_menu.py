@@ -52,6 +52,7 @@ class Connection_type_menu(Main_Menu,Authentication):
     def __netmiko_connection(self, device) -> object:
         try:
             with ConnectHandler(**device) as connection:
+                self.common_text(primary_text=device["host"],primary_text_color="yellow",primary_text_style="bold")
                 print(f"Connected to {device['host']}")
                 return connection
         except Exception as e:
@@ -118,7 +119,8 @@ class Connection_type_menu(Main_Menu,Authentication):
                 valid_ip_address = self.ip_address_validation(ip_address=ip_addresses)
 
                 # User input for printing the IP table
-                user_choice = input(self.common_text(primary_text=Text_File.common_text["print_ip_table"])).strip()
+                self.clear_screen()
+                user_choice = input(self.common_text(primary_text=Text_File.common_text["print_ip_table"],primary_text_color="yellow",primary_text_style="bold",add_line_break=False)).strip()
 
                 # If user chooses to print the IP table
                 if user_choice.lower() == "yes":
@@ -133,15 +135,23 @@ class Connection_type_menu(Main_Menu,Authentication):
                     Host_details=device_details, 
                     Filtered_Host=valid_ip_address
                 )
+
+                print(f"This is the host validation of the user--------------------------------> {valid_host}")
+
                 # Start the threading module to handle connections concurrently
                 result = self.__threading_module(device_details=valid_host)
                 # Check if threading was successful
                 if result:
                     # Push the established Netmiko connections to the global state manager
-                    Global_State_Manager.Netmiko_State_Push_Manager(device=self.netmiko_devices_connection)
+                    print(f"This is the object return by thread module {result}")
+                    state_result = Global_State_Manager.Netmiko_State_Push_Manager(device=self.netmiko_devices_connection)
+                    if state_result:
+                        self.common_text(primary_text=Text_File.common_text["successful_state_update"],primary_text_color="green")
                     # Delay for 2 seconds to allow the next steps
                     self.sleep(time=2)
-                    self.next_screen()
+                    # self.next_screen()
+
+                    print(Global_State_Manager.Multiple_Device)
                 else:
                     # Handle connectivity issue
                     self.common_text(
@@ -154,7 +164,7 @@ class Connection_type_menu(Main_Menu,Authentication):
 
             # Handle when the progress bar result is False (or no next screen)
             else:
-                self.common_text(primary_text="Progress bar failed or was canceled.", secondary_text_style="bold")
+                self.common_text(primary_text="progress_bar_failed", secondary_text_style="bold")
 
         except Exception as e:
             # Catch any exception and handle gracefully

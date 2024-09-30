@@ -140,9 +140,9 @@ class Authentication(Text_Style):
             while counter < max_counter:
                 for i in range(user_input):
                     device_ip = input(Text_Style.common_text(primary_text=Text_File.common_text["ip_address_range"],add_line_break=False)).strip()
-                    device_type = input(Text_Style.common_text(primary_text=Text_File.common_text["device_type"],add_line_break=False)).strip().lower()
-                    user_name = input(Text_Style.common_text(primary_text=Text_File.common_text["username"],add_line_break=False)).strip()
-                    user_pass = advpass() if os.name == "nt" else askpass(prompt=Text_File.common_text["password"])
+                    device_type = input(Text_Style.common_text(primary_text=Text_File.common_text["device_type"],add_line_break=False)).strip().lower() or "cisco_ios"
+                    user_name = input(Text_Style.common_text(primary_text=Text_File.common_text["username"],add_line_break=False)).strip() or "admin"
+                    user_pass = advpass() if os.name == "nt" else askpass(prompt=Text_File.common_text["password"]) or "hackerzone"             ##we need to remove this after testing purpose !!!!!~~@
                     
                     if any(" " in x or len(x) == 0 for x in [user_name, user_pass, device_ip, device_type]):
                         Text_Style.common_text(
