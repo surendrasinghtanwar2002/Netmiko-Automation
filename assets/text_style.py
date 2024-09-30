@@ -12,14 +12,14 @@ class Text_Style:
     
     @staticmethod
     def common_text(primary_text: str = "", secondary_text: str = "", 
-                    primary_text_color="black", primary_text_style="normal", 
+                    primary_text_color="white", primary_text_style="normal", 
                     secondary_text_color="red", secondary_text_style: str = "normal",add_line_break: bool = True) -> None:
         """
         Function to display two styled texts in the console.
         """
         # Combine the text color and style into one string
-        primary_style = f"{primary_text_style} {primary_text_color}".strip()
-        secondary_style = f"{secondary_text_style} {secondary_text_color}".strip()
+        primary_style = f"{primary_text_style} {primary_text_color}"
+        secondary_style = f"{secondary_text_style} {secondary_text_color}"
         
         # Create rich text objects for both texts
         styled_primary = Text(primary_text, style=primary_style)

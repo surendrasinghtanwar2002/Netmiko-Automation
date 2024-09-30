@@ -89,7 +89,6 @@ class Authentication(Text_Style):
                 primary_text_color="red"
             )
             
-
     def _single_device_auth_data(self) -> tuple[str, str, str]:
         try:
             counter_start = 0
@@ -131,7 +130,9 @@ class Authentication(Text_Style):
 
 
     def _multiple_device_auth_data(self) -> list:
-        user_input = int(input(Text_Style.common_text(primary_text=Text_File.common_text["user_choice_no"],add_line_break=False)))
+        self.clear_screen()
+        Text_Style.common_text(primary_text=Text_File.common_text["Multiple_connection_greeting"],primary_text_color="yellow",primary_text_style="bold")
+        user_input = int(input(Text_Style.common_text(primary_text=Text_File.common_text["Multiple_Auth_Data_Range"],primary_text_color="green",primary_text_style="bold",add_line_break=False)))              ###Need to work heree
         counter = 0
         max_counter = 3
         device_details_list = []
