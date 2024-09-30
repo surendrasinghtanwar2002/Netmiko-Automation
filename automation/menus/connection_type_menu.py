@@ -1,11 +1,11 @@
 ## Connection Type Menu Class ##
 from .main_menu import Main_Menu
+from typing import List
 from automation.authentication.common_authentication import Authentication
 from netmiko import ConnectHandler
 from assets.text_file import Text_File
 from state.global_State_Manger import Global_State_Manager
 from concurrent.futures import ThreadPoolExecutor
-
 
 class Connection_type_menu(Main_Menu,Authentication):
     def __init__(self,menu_items=None, event_handlers=None) -> None:
@@ -49,7 +49,7 @@ class Connection_type_menu(Main_Menu,Authentication):
             self.common_text(primary_text=Text_File.exception_text["common_function_exception"],secondary_text=e)
 
     ##Method for multiple device connection
-    def netmiko_connection(self, device) -> object:
+    def __netmiko_connection(self, device) -> object:
         try:
             with ConnectHandler(**device) as connection:
                 print(f"Connected to {device['host']}")
@@ -62,9 +62,14 @@ class Connection_type_menu(Main_Menu,Authentication):
             )
 
     def __threading_module(self,device_details:list) -> bool:
+        """
+        Threading Module method is being used to create multiple thread for multiple connection
+        Attributes:- 
+                     (1) device_deatils = List
+        """
         try:
             with ThreadPoolExecutor(max_workers=5) as executor:
-                self.netmiko_devices_connection = list(executor.map(self.netmiko_connection, device_details))
+                self.netmiko_devices_connection = list(executor.map(self.__netmiko_connection, device_details))
                 Global_State_Manager.Netmiko_State_Push_Manager(device=self.netmiko_devices_connection)  # Add connections to global state manager
                 return self.netmiko_devices_connection
         except Exception as e:
@@ -73,23 +78,43 @@ class Connection_type_menu(Main_Menu,Authentication):
                 secondary_text=str(e),
                 secondary_text_color="red"
             )
-    @staticmethod
-    def _filter_method(device) -> bool:
+
+    def __filter_method(self,device) -> bool:
         return "host" in device
     
+    def __host_validation(self,Host_details:List,Filtered_Host:List):
+        """
+        Host Validation Method is the method to filtered those host which is responding back to our pind command
+        Attributes:-
+                     (1)Host_details = List
+                     (2)Filtered_Host = List
+        """
+        self.valid_host = [ ]
+        try:
+            for host in Host_details:
+                for filteredhost in Filtered_Host:
+                    if host["host"] == filteredhost:
+                        self.valid_host.append(host)
+                    else:
+                        pass
+            return self.valid_host
+        except Exception as e:
+            self.common_text(primary_text=Text_File.exception_text["common_function_exception"],secondary_text=e,secondary_text_style="bold")
+
     ## Multiple device connection method
     def __multiple_device_connection(self):
         try:
             result = self.progress_bar(Progessbar_name="Loading your Next Screen")
             if result:
                 device_details = self._multiple_device_auth_data()                                              ##Return device details in list dictionary
-                filtered_devices = filter(self._filter_method, device_details)  # Use filter to get devices with the 'host' key
+                filtered_devices = filter(self.__filter_method, device_details)  # Use filter to get devices with the 'host' key
                 ip_addresses = [device["host"] for device in filtered_devices]  # Extracting IP addresses
                 valid_ip_address = self.ip_address_validation(ip_address=ip_addresses)
                 user_choice = input(self.common_text(primary_text=Text_File.common_text["print_ip_table"])).strip()
                 if user_choice == "yes":
                     self.Table_View_Ouput(table_header=["Sequence","IP Address"],table_data=valid_ip_address,user_Sequence=True)      ##also need to work here also
-                    result = self.__threading_module(device_details=device_details)       ##Here we need to work that we need to filter those ip address which is not valid
+                    valid_host = self.__host_validation(Host_details=device_details,Filtered_Host=valid_ip_address)          ##Method is being used to filtered the host which is responding back to our ping command
+                    result = self.__threading_module(device_details=valid_host)       ##Here we need to work that we need to filter those ip address which is not valid
                     print(result)
                 else:
                     pass

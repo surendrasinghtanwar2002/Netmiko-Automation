@@ -6,16 +6,17 @@ device_list = [
     {"hostname": "Firewall1", "ip_address": "10.0.0.1", "model": "Fortinet"}
 ]
 
-# Filter function to retrieve IP addresses
-def filter_ip(device):
-    return "ip_address" in device
+filter_ip = ["192.168.1.1","192.168.1.2","192.168.1.3"]
 
-# Use filter() to get only those devices that have the key 'ip_address'
-filtered_devices = filter(filter_ip, device_list)
 
-# Extracting IP addresses and their values
-ip_addresses = [(device["ip_address"], device) for device in filtered_devices]
+valid_host = []
 
-# Output the results
-for ip, device in ip_addresses:
-    print(f"IP Address: {ip}")
+for items in device_list:
+    for valid_ip in filter_ip:
+        if items["ip_address"] == valid_ip:
+            valid_host.append(items)
+        else:
+            print("items not found")
+
+# if __name__ == "__main__":
+print(valid_host)

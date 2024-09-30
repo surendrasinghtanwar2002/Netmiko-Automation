@@ -47,7 +47,7 @@ class Text_File:
     }
     ##common text
     exception_text ={
-        "common_function_exception": "Your function have exception",
+        "common_function_exception": f"Your function have exception {__name__}",
         "value_error":"You have passed wrong value",
         "CalledProcessError":"Subprocess Exception occured",
         "file_not_found":f"File not Founded Exception in {__name__}",

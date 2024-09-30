@@ -46,27 +46,38 @@ class Authentication(Text_Style):
             print(f'Function: {__name__}, Exception: {type(processerror).__name__}')
             return []
     
-    def Table_View_Ouput(self,table_header:List[str]=None,table_data:List[str]=None,user_Sequence:bool=False,table_Style:str="double_outline")->None:         ##Method to print the valid ip address    
+    def Table_View_Output(self, 
+                          table_header: List[str] = None, 
+                          table_data: List[str] = None, 
+                          user_Sequence: bool = False, 
+                          table_Style: str = "double_outline") -> None:
         """
-        Table View is used to Print the output in table format
+        Method to print the valid IP addresses or any data in a table format.
         
-        Attribues:- (1) table_header = List 
-                    (2) table_data = List
-                    (3) User_Sequence =  Bool
-                    (4) table_style = Str
-
-        """    
-        self.table_data = table_data if table_data and isinstance(table_data,list) else [ ]
-        self.header = table_header if table_header and isinstance(table_header,list) else [ ]
-        self.sequence_data = [ ]
+        Attributes:
+        (1) table_header: List of strings representing the table headers (optional).
+        (2) table_data: List of data to be printed in the table format.
+        (3) user_Sequence: Boolean flag to include a sequence number before each row.
+        (4) table_style: Style of the table (default is "double_outline").
+        """
+        self.table_data = table_data if table_data and isinstance(table_data, list) else []
+        self.header = table_header if table_header and isinstance(table_header, list) else []
+        self.sequence_data = []
+        
         if user_Sequence:
-            for sequence,ip_address in enumerate(self.table_data,start=1):
-                 self.sequence_data.append([sequence,ip_address])
-            self.clear_screen()
-            Text_Style.common_text(primary_text=tabulate(self.sequence_data,self.header,tablefmt=table_Style),primary_text_color="red")
-            # print(tabulate(self.sequence_data,self.header,tablefmt="double_outline").center(shutil.get_terminal_size().columns))      ##Used in temperorary case
+            for sequence, data in enumerate(self.table_data, start=1):
+                self.sequence_data.append([sequence, data])
+                
+            self.clear_screen()  # Ensure this method clears the screen
+            Text_Style.common_text(
+                primary_text=tabulate(self.sequence_data, self.header, tablefmt=table_Style),
+                primary_text_color="red"
+            )
         else:
-            Text_Style.common_text(primary_text=tabulate(self.table_data,self.header,tablefmt=table_Style),primary_text_color="red")
+            Text_Style.common_text(
+                primary_text=tabulate(self.table_data, self.header, tablefmt=table_Style),
+                primary_text_color="red"
+            )
             
 
     def _single_device_auth_data(self) -> tuple[str, str, str]:
