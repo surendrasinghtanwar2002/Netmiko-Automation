@@ -8,6 +8,7 @@ import os
 class Script_Menu(Main_Menu):
     def __init__(self,menu_items=None, event_handlers=None) -> None:
         self.menu_items = self.__menu_items_list()
+        self.netmiko_connection = None              ##This will store the netmiko object
         self.script_event_hanlders = self.__load_script_actions()
         super().__init__(menu_items=menu_items if menu_items else self.menu_items, 
                  event_handlers=event_handlers if event_handlers else self.script_event_hanlders)
@@ -23,39 +24,49 @@ class Script_Menu(Main_Menu):
     def __menu_items_list(self) -> list:              ##menu items list
         exclude_items = {"__init__.py", "unwanted_file.py", "__pycache__"}
         dir_list = [item.strip(".py") for item in os.listdir(self.__cisco_script_path()) if item not in exclude_items]
-        # print(f"Menu items: {Global_State_Manager.Single_Device}")  # Debugging statement
         return dir_list
     
     ##Method for creating a event handler dictionary from the create script actions
     def __load_script_actions(self) -> dict:              ##load script action menu return
         menu_items = self.__menu_items_list()
         items_sequence = len(menu_items)
-        return {str(i + 1): self.__create_script_action(script_name=menu_items[i]) for i in range(items_sequence)} 
+        #assuming the class name is the capitalized version of the script name so we need to put the script name as the class name for proper configuration
+        return {str(i + 1): self.__create_script_action(script_name=menu_items[i], class_name=menu_items[i].capitalize()) for i in range(items_sequence)}
+        
     
     ##Method for creating the script action and loading module dynamically using the importlib.util module
-    def __create_script_action(self, script_name: str): 
+    def __create_script_action(self, script_name: str, class_name: str):
         def action(connection):
-            module_path = os.path.join(self.__cisco_script_path, f"{script_name}.py")   
+            module_path = os.path.join(self.__cisco_script_path, f"{script_name}.py")
             spec = importlib.util.spec_from_file_location(script_name, module_path)
-            module = importlib.util.module_from_spec(spec)   ##This method is creating a new module object
-            spec.loader.exec_module(module)                            
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+
             if module:
-                func = getattr(module, 'main', None)            ##getattr function boject "main"            
-                if func and callable(func):
-                    try:                
-                        result = func(connection)               
-                        return result
-                    except TypeError as e:
-                        print("Error calling here",e)
+                # Dynamically load the class from the module
+                class_ = getattr(module, class_name, None)
+                if class_:
+                    # Creating a instance from the class
+                    class_instance = class_()
+
+                    # If the class has a __call__ method, invoke it directly
+                    if callable(class_instance):
+                        try:
+                            result = class_instance(self.netmiko_connection)
+                            return result
+                        except TypeError as e:
+                            print(f"Error calling class instance: {e}")
+                    else:
+                        print(f"Class `{class_name}` does not have a `__call__` method")
                 else:
-                    print(f"Function `main` not found in {script_name}")
-                    return None
+                    print(f"Class `{class_name}` not found in module `{script_name}`")
             return False
         return action
     
     ##Overiding the main menu of the parent menus
     def display_main_menu(self,netmiko_type:object | list) -> None:
         try:
+            self.netmiko_connection = netmiko_type          ##passing the netmiko object to instance variable
             while True:
                 self.clear_screen()
                 if isinstance(netmiko_type,object):
@@ -65,7 +76,7 @@ class Script_Menu(Main_Menu):
                 if choicevalue:
                     action = self.script_event_hanlders.get(choicevalue)(self)
                     if action:
-                        result = action(netmiko_type)
+                        result = action(self.netmiko_connection)
                         print(f"This is your result {result}")
                         break
         except Exception as e:

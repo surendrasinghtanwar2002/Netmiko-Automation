@@ -36,14 +36,12 @@ class Connection_type_menu(Main_Menu,Authentication):
                 self.clear_screen()
                 self.common_text(primary_text=Text_File.common_text["Single_device"],primary_text_color="red",primary_text_style="bold")
                 auth_data = self._single_device_auth_data()
-                print(f"Checking either auth data is coming or not {auth_data}")                
                 if auth_data:
                     connection = ConnectHandler(**auth_data)
                 if connection:
                     result = Global_State_Manager.Netmiko_State_Push_Manager(device=connection)
                     if result:
                         self.common_text(primary_text=Text_File.common_text["successful_state_update"],primary_text_color="green")
-                        print("we will again retry the function execution".center(120,"]"))
                         self.next_screen(connectiontype=connection)               ##P assing netmiko connection object  prop        
                 else:
                     self.common_text(secondary_text=Text_File.error_text["Device invalid"])
@@ -55,6 +53,7 @@ class Connection_type_menu(Main_Menu,Authentication):
         try:
             with ConnectHandler(**device) as connection:
                 self.common_text(primary_text=device["host"],primary_text_color="yellow",primary_text_style="bold")
+                self.common_text(primary_text=Text_File.common_text["Device_connection_details"],primary_text_color="yellow",primary_text_style="bold")
                 print(f"Connected to {device['host']}")
                 return connection
         except Exception as e:
