@@ -129,18 +129,47 @@ class Common_Methods(Text_Style):
             self.common_text(primary_text=Text_File.exception_text["common_function_exception"],secondary_text=f"{__name__,e}")
             return False
 
-    def commands_send(self,commands:str | list):
+    def patternExplorer(self,Pattern:str,Raw_Data:str):
         """
-        The method command_send is used to send the command and wait for a user prompt if its is avilable for the command
-        Arguments:-
-                    (1) commands -> str | list
+        Find the pattern from the raw data
+
+        Args:
+             Pattern (string): The Pattern to apply on the data
+             Raw_Data (string): The data where regex pattern will be applied
         """
+        try:
+            result = re.search(Pattern,Raw_Data)
+            if result:
+                user_choice = input(f"{result} [Yes/No]:- ").strip().lower()
+                Raw_Data += self.netmiko_connection.send_command(user_choice)
+                return Raw_Data
+            else:
+                return Raw_Data
+
+        except Exception as e:
+            print("In this exception occurs of the function")
+
+    def commands_send(self,commands:str | list,configuration:bool=False):
+        """
+            Sends a command or a list of commands to the device and waits for a user prompt if one is available.
+
+            Args:
+                commands (str | list): The command(s) to be sent. 
+                                        If a single command is provided, it should be a string. 
+                                        If multiple commands are to be sent, provide them as a list of strings.
+
+            Returns:
+                str: The output received from the device after sending the command(s).
+                
+            Raises:
+                ValueError: If the input is neither a string nor a list of strings.
+            """
         user_pattern = r"^(.*?\[confirm\].*?|.*?\?.*?)$"            ##Regex Pattern for searching a string in the raw data
         final_output = ""
         try:
             print("We can configure the commands")
-            if isinstance(commands,str):
-                output = self.netmiko_connection.send_command_timing(commands)
+            if isinstance(commands,str) and configuration == False:
+                output = self.netmiko_connection.send_config_set(commands) if configuration else self.netmiko_connection.send_command_timing(commands)
                 result = re.search(user_pattern,output)
                 if result:
                     user_choice = input(f"{result} [Yes/No]:-").strip().lower()
@@ -149,9 +178,9 @@ class Common_Methods(Text_Style):
                     return final_output
                 else:
                     final_output += f"----------- Host {self.netmiko_connection.host} ----------- \n{output}"
-            elif isinstance(commands,list):
+            elif isinstance(commands,list) and configuration == False:
                 for command in commands:
-                    output = self.netmiko_connection.send_command_timing(command)
+                    output = self.netmiko_connection.send_config_set(command) if configuration else self.netmiko_connection.send_command_timing(command)
                     result = re.search(user_pattern,output)
                     if result:
                         user_choice = input(f"{result} [Yes/No]:-").strip().lower()
@@ -163,5 +192,6 @@ class Common_Methods(Text_Style):
                 return False
         except Exception as e:
             print(f"This is the exception of the function",e)
+    
 
 
