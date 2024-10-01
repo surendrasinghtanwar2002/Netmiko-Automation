@@ -1,6 +1,7 @@
 import json
 from assets.text_file import Text_File
 from assets.text_style import Text_Style
+from tabulate import tabulate
 
 class Common_Methods(Text_Style):
     def __init__(self,netmiko_connection:object) -> None:
@@ -37,7 +38,7 @@ class Common_Methods(Text_Style):
             self.common_text(primary_text=Text_File.exception_text["common_function_exception"],secondary_text=e)
             return False
         
-    def Data_convertor(self,raw_data:str,indentation:int=4):
+    def Data_convertor(self,raw_data:str,indentation:int=4)->object | str:
         """
         The method Json_String_Convertor is used to convert the raw data into Json data \n
         Arguments:-
@@ -54,24 +55,78 @@ class Common_Methods(Text_Style):
                 match user_choice:
                     case 1:                 ##JSON String to Python object
                         self.common_text(primary_text=Text_File.common_text["json_to_python_object"],primary_text_color="yellow")
-                        print("We will perform the json string to python object")
                         if isinstance(raw_data,str):
                             python_object = json.loads(raw_data)
                             return python_object
                         else:
                             counter_value += 1          #-> Increasing counter by 1
-                            print("Your given  data is not in json string please check it again")          
+                            self.common_text(primary_text=Text_File.error_text["json_to_python_object_error"])
                     case 2:                 ##Python object to Json String
-                        print("We will convert python object to a string object")
+                        self.common_text(primary_text=Text_File.common_text["object_to_json_string"])
                         if isinstance(raw_data,dict):
                             json_string = json.dumps(raw_data,indent=indentation)
                             return json_string
                         else:
                             counter_value += 1          #->Increasing counter by 1
-                            print("Your given data is not in python object so please check it again")
+                            self.common_text(primary_text=Text_File.error_text["Python_object_to_json_error"])
                     case 3:
                         return False;
                     case _:
-                        print("Please select a proper option from the above list")
+                        self.common_text(primary_text=Text_File.common_text["valid_option_warn"])
         except Exception as e:
-            print("We will get the exception of the function",e)
+            self.common_text(primary_text=Text_File.exception_text["common_function_exception"],secondary_text=f"{__name__,e}")
+
+    def Interface_validation(self, interface_name: str | list, interface_detail_data: dict)->bool:
+        """
+        The method Interface validation is used to validate the interface from the device data.\n
+        Arguments:-
+                    (1) interface_name -> str
+                    (2) interface_detail_data -> dict
+        """
+        valid_interface = []  # This will hold valid interface names
+        try:
+            # Check if interface_name is a string
+            if isinstance(interface_name, str):
+                # Use next to find the first matching interface
+                interface_confirmation = next(
+                    (item for item in interface_detail_data if item["interface"] == interface_name), 
+                    None
+                )
+                return interface_confirmation if interface_confirmation else False
+
+            # Check if interface_name is a list
+            elif isinstance(interface_name, list):
+                # Loop through the interface_detail_data and interface_name
+                for item in interface_detail_data:
+                    if item["interface"] in interface_name:
+                        valid_interface.append(item["interface"])  # Add valid interface to the list
+                
+                return valid_interface
+
+        except Exception as e:
+            print(f"This is the exception of the function: {e}")
+
+    def getTableViewInterfaceDetails(self,interface_details:dict)->None:
+        """
+        The method getTableViewInterfaceDetails is used to print the interface details in table format.\n
+        Arguments:- 
+                    (1) interface_details = dict
+        """
+        try:
+            header = ["Interface Name","Ip Address","Status","Prototype"]
+            table_data = []
+            for data in interface_details:
+                row = [data.get("interface"),
+                    data.get("ip_address"),
+                    data.get("status"),
+                    data.get("proto")
+                    ]
+                table_data.append(row)
+            ##display the items
+            print(tabulate(table_data, header, tablefmt="heavy_grid"))
+
+        except Exception as e:
+            self.common_text(primary_text=Text_File.exception_text["common_function_exception"],secondary_text=e)
+            return False
+
+

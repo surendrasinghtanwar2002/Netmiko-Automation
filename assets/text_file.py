@@ -51,7 +51,9 @@ class Text_File:
         "valid_ip":"Your Ip Address is valid",
         "interface_details":"Do you want to print interface details",
         "show_interface_details":"This is your interface details",
-        "json_to_python_object":"Convert the Json String to Python object"
+        "json_to_python_object":"Convert the Json String to Python object",
+        "pythonobject_to_json_string":"Convert the Python Object to Json String"
+        "valid_option_warn":"Please choose a valid option from the menu"
     }
     ##common text
     exception_text ={
@@ -64,6 +66,8 @@ class Text_File:
         "type_error":f"Type error found in the your function {__name__}",
         "progress_bar_failed":"Progress bar failed or was canceled.",
         "instance_error":"Error occured while calling the instance",
+        "json_to_python_object_error":"Your given data is not Json String please check it",
+        "Python_object_to_json_error":"Your give data is not Python object please check it"
 
     }
 
