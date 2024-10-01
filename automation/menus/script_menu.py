@@ -52,14 +52,15 @@ class Script_Menu(Main_Menu):
                     # If the class has a __call__ method, invoke it directly
                     if callable(class_instance):
                         try:
-                            result = class_instance(self.netmiko_connection)
+                            result = class_instance(connection)
                             return result
                         except TypeError as e:
-                            print(f"Error calling class instance: {e}")
+                            self.common_text(primary_text=Text_File.common_text["instance_error"],secondary_text=e)
                     else:
-                        print(f"Class `{class_name}` does not have a `__call__` method")
+                        self.common_text
+                        self.common_text(primary_text=class_name,secondary_text=Text_File.error_text["callable_error"])
                 else:
-                    print(f"Class `{class_name}` not found in module `{script_name}`")
+                    self.common_text(primary_text=f"Class {class_name} not found in the module",secondary_text=script_name)
             return False
         return action
     
@@ -69,7 +70,7 @@ class Script_Menu(Main_Menu):
             self.netmiko_connection = netmiko_type          ##passing the netmiko object to instance variable
             while True:
                 self.clear_screen()
-                if isinstance(netmiko_type,object):
+                if isinstance(self.netmiko_connection,object):
                     self.common_text(primary_text=f"{Text_File.common_text["Device_connection_details"]}{netmiko_type.host} ".center(shutil.get_terminal_size().columns,"#"),primary_text_color="green",primary_text_style="bold")
                 self.render_menu_items(menu_items=self.menu_items)
                 choicevalue = self.check_user_choice()
@@ -77,13 +78,11 @@ class Script_Menu(Main_Menu):
                     action = self.script_event_hanlders.get(choicevalue)(self)
                     if action:
                         result = action(self.netmiko_connection)
-                        print(f"This is your result {result}")
+                        print(f"In this are we will get the result from the class menu and further we can perform any task here:---- {result}")        ##Just used for debugging purpose
                         break
         except Exception as e:
-            print(f"This is the exception of the function {e}")
+            self.common_text(primary_text=Text_File.exception_text["common_function_exception"],secondary_text=e)
                 
-    def debugger(self):
-        print("Hey bro whatsupp ")
             
         
         

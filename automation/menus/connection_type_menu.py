@@ -42,7 +42,7 @@ class Connection_type_menu(Main_Menu,Authentication):
                     result = Global_State_Manager.Netmiko_State_Push_Manager(device=connection)
                     if result:
                         self.common_text(primary_text=Text_File.common_text["successful_state_update"],primary_text_color="green")
-                        self.next_screen(connectiontype=connection)               ##P assing netmiko connection object  prop        
+                        self.next_screen(connectiontype=connection)               ##Passing netmiko connection object  prop        
                 else:
                     self.common_text(secondary_text=Text_File.error_text["Device invalid"])
         except Exception as e:
@@ -53,8 +53,7 @@ class Connection_type_menu(Main_Menu,Authentication):
         try:
             with ConnectHandler(**device) as connection:
                 self.common_text(primary_text=device["host"],primary_text_color="yellow",primary_text_style="bold")
-                self.common_text(primary_text=Text_File.common_text["Device_connection_details"],primary_text_color="yellow",primary_text_style="bold")
-                print(f"Connected to {device['host']}")
+                self.common_text(primary_text=Text_File.common_text["Device_connection_details"],primary_text_color="yellow",primary_text_style="bold",secondary_text=device["host"])
                 return connection
         except Exception as e:
             self.common_text(

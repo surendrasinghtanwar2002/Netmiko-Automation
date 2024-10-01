@@ -47,8 +47,11 @@ class Text_File:
         "Multiple_Auth_Data_Range":"Please Enter your number of device you want to configure (eg:- 2,4,6,8,10):- ",
         "Multiple_connection_greeting":" Welcome to Netmiko Multiple Connection ".center(shutil.get_terminal_size().columns,"*"),
         "device_details_updated":" Your device details have been stored succesfully ".center(shutil.get_terminal_size().columns,"#"),
-        "Device_connection_details":" You are connected to device:- ",
-        "valid_ip":"Your Ip Address is valid"
+        "Device_connection_details":" You are connected to device  ",
+        "valid_ip":"Your Ip Address is valid",
+        "interface_details":"Do you want to print interface details",
+        "show_interface_details":"This is your interface details",
+        "json_to_python_object":"Convert the Json String to Python object"
     }
     ##common text
     exception_text ={
@@ -59,10 +62,11 @@ class Text_File:
         "os exception":"Os exception arrived",
         "connection_failed":"Failed to connect the device",
         "type_error":f"Type error found in the your function {__name__}",
-        "progress_bar_failed":"Progress bar failed or was canceled."
-        
+        "progress_bar_failed":"Progress bar failed or was canceled.",
+        "instance_error":"Error occured while calling the instance",
 
     }
+
     ##error text
     error_text = {
         "device_details_error":"!!! You have provided wrong details of the device !!!".center(shutil.get_terminal_size().columns),
@@ -72,7 +76,8 @@ class Text_File:
         "menu_wrong_input":"Your given input is not presented in the menu",
         "Unvalid_ip_address":"Your IP Address is not valid",
         "Device invalid":"Device is not reachable",
-        "Connectivity_Issue":"Please Check your internet connection or device reachability"
+        "Connectivity_Issue":"Please Check your internet connection or device reachability",
+        "callable_error":"Class does not have a `__call__` method"
     }
     ##debug text
     debug_text = {

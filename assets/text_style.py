@@ -13,7 +13,7 @@ class Text_Style:
     @staticmethod
     def common_text(primary_text: str = "", secondary_text: str = "", 
                     primary_text_color="white", primary_text_style="bold", 
-                    secondary_text_color="red", secondary_text_style: str = "normal",add_line_break: bool = True) -> None:
+                    secondary_text_color="red", secondary_text_style: str = "bold",add_line_break: bool = True) -> None:
         """
         Function to display two styled texts in the console.
         """
