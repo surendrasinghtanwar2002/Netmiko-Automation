@@ -2,7 +2,7 @@ import json
 from assets.text_file import Text_File
 from assets.text_style import Text_Style
 from tabulate import tabulate
-
+import re
 class Common_Methods(Text_Style):
     def __init__(self,netmiko_connection:object) -> None:
         self.netmiko_connection = netmiko_connection
@@ -123,10 +123,45 @@ class Common_Methods(Text_Style):
                     ]
                 table_data.append(row)
             ##display the items
-            print(tabulate(table_data, header, tablefmt="heavy_grid"))
+            self.common_text(primary_text=f"{tabulate(table_data, header, tablefmt="heavy_grid")}",primary_text_color="yellow")
 
         except Exception as e:
-            self.common_text(primary_text=Text_File.exception_text["common_function_exception"],secondary_text=e)
+            self.common_text(primary_text=Text_File.exception_text["common_function_exception"],secondary_text=f"{__name__,e}")
             return False
+
+    def commands_send(self,commands:str | list):
+        """
+        The method command_send is used to send the command and wait for a user prompt if its is avilable for the command
+        Arguments:-
+                    (1) commands -> str | list
+        """
+        user_pattern = r"^(.*?\[confirm\].*?|.*?\?.*?)$"            ##Regex Pattern for searching a string in the raw data
+        final_output = ""
+        try:
+            print("We can configure the commands")
+            if isinstance(commands,str):
+                output = self.netmiko_connection.send_command_timing(commands)
+                result = re.search(user_pattern,output)
+                if result:
+                    user_choice = input(f"{result} [Yes/No]:-").strip().lower()
+                    output += self.netmiko_connection.send_command(user_choice)
+                    final_output += f"----------- Host {self.netmiko_connection.host} ----------- \n{output}"       ##It will store the details
+                    return final_output
+                else:
+                    final_output += f"----------- Host {self.netmiko_connection.host} ----------- \n{output}"
+            elif isinstance(commands,list):
+                for command in commands:
+                    output = self.netmiko_connection.send_command_timing(command)
+                    result = re.search(user_pattern,output)
+                    if result:
+                        user_choice = input(f"{result} [Yes/No]:-").strip().lower()
+                        output+= self.netmiko_connection.send_command(user_choice)
+                        final_output += f"----------- Host {self.netmiko_connection.host} ----------- \n{output}"       ##It will store the details
+                return final_output
+            else:
+                print("Your given data is not valid")
+                return False
+        except Exception as e:
+            print(f"This is the exception of the function",e)
 
 
