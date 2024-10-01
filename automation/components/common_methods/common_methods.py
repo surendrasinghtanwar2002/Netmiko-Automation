@@ -1,6 +1,7 @@
 import json
 from assets.text_file import Text_File
 from assets.text_style import Text_Style
+from concurrent.futures import ThreadPoolExecutor
 from tabulate import tabulate
 import re
 class Common_Methods(Text_Style):
@@ -147,7 +148,23 @@ class Common_Methods(Text_Style):
                 return Raw_Data
 
         except Exception as e:
-            print("In this exception occurs of the function")
+            print("In this exception occurs of the function",e)
+
+
+            #######################################***&&&&&****((((((((((((((((We need to work from here because paralle device commands is still not working properly))))))))))))))))
+    def parallelDeviceCommand(self,device_list:list,command_list:str | list):
+        """
+            Sends a commands or a list of commands parallerly to a list of device and waits for a user prompt if one is avilable.
+            
+            Args:
+                 device_list : Netmiko Device List object
+                 commands_list : A list of commands to pass to multiple devices
+        """
+        try:
+            with ThreadPoolExecutor(max_workers=5) as executor:
+                self.netmiko_devices_connection = list(executor.map(self.commands_send, device_list,command_list))
+        except Exception as e:
+            print(f"This is the exception of the function",e)
 
     def commands_send(self,commands:str | list,configuration:bool=False):
         """
@@ -170,26 +187,27 @@ class Common_Methods(Text_Style):
             print("We can configure the commands")
             if isinstance(commands,str) and configuration == False:
                 output = self.netmiko_connection.send_config_set(commands) if configuration else self.netmiko_connection.send_command_timing(commands)
-                result = re.search(user_pattern,output)
+                result = self.patternExplorer(Pattern=user_pattern,Raw_Data=output)
                 if result:
-                    user_choice = input(f"{result} [Yes/No]:-").strip().lower()
-                    output += self.netmiko_connection.send_command(user_choice)
-                    final_output += f"----------- Host {self.netmiko_connection.host} ----------- \n{output}"       ##It will store the details
+                    final_output += f"----------- Host {self.netmiko_connection.host} ----------- \n{result}"       ##It will store the details
                     return final_output
                 else:
-                    final_output += f"----------- Host {self.netmiko_connection.host} ----------- \n{output}"
+                    final_output += f"----------- Host {self.netmiko_connection.host} ----------- \n{result}"
+
             elif isinstance(commands,list) and configuration == False:
                 for command in commands:
                     output = self.netmiko_connection.send_config_set(command) if configuration else self.netmiko_connection.send_command_timing(command)
-                    result = re.search(user_pattern,output)
+                    result = self.patternExplorer(Pattern=user_pattern,Raw_Data=output)
                     if result:
-                        user_choice = input(f"{result} [Yes/No]:-").strip().lower()
-                        output+= self.netmiko_connection.send_command(user_choice)
-                        final_output += f"----------- Host {self.netmiko_connection.host} ----------- \n{output}"       ##It will store the details
+                       final_output += f"----------- Host {self.netmiko_connection.host} ----------- \n{result}"       ##It will store the details
+                    else:
+                        final_output += f"----------- Host {self.netmiko_connection.host} ----------- \n{result}" 
                 return final_output
+            
             else:
                 print("Your given data is not valid")
                 return False
+            
         except Exception as e:
             print(f"This is the exception of the function",e)
     

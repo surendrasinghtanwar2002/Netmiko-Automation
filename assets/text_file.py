@@ -52,7 +52,7 @@ class Text_File:
         "interface_details":"Do you want to print interface details",
         "show_interface_details":"This is your interface details",
         "json_to_python_object":"Convert the Json String to Python object",
-        "pythonobject_to_json_string":"Convert the Python Object to Json String"
+        "object_to_json_string":"Convert the Python Object to Json String",
         "valid_option_warn":"Please choose a valid option from the menu"
     }
     ##common text
