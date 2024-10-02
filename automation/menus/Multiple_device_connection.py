@@ -93,7 +93,7 @@ class MultipleDeviceConnection:
                 if user_choice == "yes":
                     self.__printing_valid_ip_address_table(host_ip=valid_ip_address)
                 else:
-                    pass
+                    return False
         except Exception as e:
             Text_Style.common_text(
                 primary_text=Text_File.exception_text["common_function_exception"],

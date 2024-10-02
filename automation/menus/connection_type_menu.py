@@ -38,13 +38,17 @@ class Connection_type_menu(Main_Menu,Authentication):
                 auth_data = self._single_device_auth_data()
                 if auth_data:
                     connection = ConnectHandler(**auth_data)
-                if connection:
-                    result = Global_State_Manager.Netmiko_State_Push_Manager(device=connection)
-                    if result:
-                        self.common_text(primary_text=Text_File.common_text["successful_state_update"],primary_text_color="green")
-                        self.next_screen(connectiontype=connection)               ##Passing netmiko connection object  prop        
-                else:
-                    self.common_text(secondary_text=Text_File.error_text["Device invalid"])
+                try:    
+                    if connection:
+                        result = Global_State_Manager.Netmiko_State_Push_Manager(device=connection)
+                        if result:
+                            self.common_text(primary_text=Text_File.common_text["successful_state_update"],primary_text_color="green")
+                            self.next_screen(connectiontype=connection)               ##Passing netmiko connection object  prop        
+                    else:
+                        self.common_text(secondary_text=Text_File.error_text["Device invalid"])
+                except Exception as e:
+                    print("This is the exception of the function")
+                    return self.display_main_menu()
         except Exception as e:
             self.common_text(primary_text=Text_File.exception_text["common_function_exception"],secondary_text=e)
 
