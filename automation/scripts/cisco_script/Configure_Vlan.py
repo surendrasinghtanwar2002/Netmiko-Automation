@@ -14,7 +14,8 @@ class Configure_Vlan(Main_Menu,Common_Methods):
                                    "3":self.exit_menu
                                    }         
         ##Passing the value to the super class   
-        Main_Menu.__init__(menu_items=self.Vlan_Menu_Items,event_handlers=self.Vlan_event_handlers)       ##Passing netmiko connection object to the super class
+        Main_Menu.__init__(menu_items=self.Vlan_Menu_Items,event_handlers=self.Vlan_event_handlers)       ##Passing netmiko connection object to the super class (Main Menu)
+        Common_Methods.__init__(netmiko_connection=self.netmiko_connection)                               ##Passing netmiko connection object to the super class (Common methods)
     
     def showvlan_details(self):
         try:
@@ -29,9 +30,17 @@ class Configure_Vlan(Main_Menu,Common_Methods):
             print(f"This is the exception of the function")
 
     def Configure_Vlan_Menu(self):
+        """
+        Configure Vlan Menu is the method to render the menu of Vlan Menu
+        """
         self.clear_screen()
         self.display_main_menu()
-        # user_input
+        if isinstance(self.netmiko_connection,object):
+            result = self.commands_send(command="show ip interface brief",device=self.netmiko_connection)
+            print(result)
+        elif isinstance(self.netmiko_connection,list):
+            output = self.parallelDeviceCommand(device_list=self.netmiko_connection,command_list="show ip interface brief")
+            print(output)
     
     def __call__(self,connection) -> Any:           ##Callable object
         self.netmiko_connection = connection

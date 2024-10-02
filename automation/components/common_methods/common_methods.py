@@ -150,8 +150,12 @@ class Common_Methods(Text_Style):
         except Exception as e:
             print("In this exception occurs of the function",e)
 
-
-            #######################################***&&&&&****((((((((((((((((We need to work from here because paralle device commands is still not working properly))))))))))))))))
+    def gettableview_output(self):
+        try:
+            print("This will print the output in the table format")
+        except Exception as e:
+            print(f"This is the exception of the function")
+    
     def parallelDeviceCommand(self, device_list: list, command_list: str | list, configuration: bool = False):
             """
             Sends commands or a list of commands in parallel to a list of devices
