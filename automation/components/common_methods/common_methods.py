@@ -181,39 +181,39 @@ class Common_Methods(Text_Style):
                 print(f"This is the exception of the function: {e}")
                 return []
 
-   def commands_send(self, command: str | list, configuration: bool = False, device=None):
-    """
-    Sends a command to a single device.
+    def commands_send(self, command: str | list, configuration: bool = False, device=None):
+        """
+        Sends a command to a single device.
 
-    Args:
-        command (str | list): The command(s) to be sent (string or list of strings).
-        configuration (bool): Whether the command is a configuration command.
-        device: The device connection object to send the command to.
-    """
-    user_pattern = r"^(.*?\[confirm\].*?|.*?\?.*?)$"  # Regex pattern for user prompts
-    final_output = ""
+        Args:
+            command (str | list): The command(s) to be sent (string or list of strings).
+            configuration (bool): Whether the command is a configuration command.
+            device: The device connection object to send the command to.
+        """
+        user_pattern = r"^(.*?\[confirm\].*?|.*?\?.*?)$"  # Regex pattern for user prompts
+        final_output = ""
 
-    try:
-        if isinstance(device, object):  # Ensure device is a valid object
-            if isinstance(command, str):
-                output = device.send_config_set(command) if configuration else device.send_command_timing(command)
-                result = self.patternExplorer(Pattern=user_pattern, Raw_Data=output)
-                final_output += f"----------- Host {device.host} -----------\n{result if result else output}"
-                return final_output
-
-            elif isinstance(command, list):
-                for cmd in command:
-                    output = device.send_config_set(cmd) if configuration else device.send_command_timing(cmd)
+        try:
+            if isinstance(device, object):  # Ensure device is a valid object
+                if isinstance(command, str):
+                    output = device.send_config_set(command) if configuration else device.send_command_timing(command)
                     result = self.patternExplorer(Pattern=user_pattern, Raw_Data=output)
                     final_output += f"----------- Host {device.host} -----------\n{result if result else output}"
-                return final_output
+                    return final_output
 
-        else:
-            print("Invalid device input")
-            return False
+                elif isinstance(command, list):
+                    for cmd in command:
+                        output = device.send_config_set(cmd) if configuration else device.send_command_timing(cmd)
+                        result = self.patternExplorer(Pattern=user_pattern, Raw_Data=output)
+                        final_output += f"----------- Host {device.host} -----------\n{result if result else output}"
+                    return final_output
 
-    except Exception as e:
-        print(f"Exception in commands_send function: {e}")
-        return ""
+            else:
+                print("Invalid device input")
+                return False
+
+        except Exception as e:
+            print(f"Exception in commands_send function: {e}")
+            return ""
 
 
