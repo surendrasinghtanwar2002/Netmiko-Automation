@@ -19,7 +19,18 @@ class Configure_Vlan(Main_Menu,Common_Methods):
     
     def showvlan_details(self):
         try:
-            print("VLAN DETAILS ARE PRINTING AROUND")
+            vlan_details = self.netmiko_connection.send_command("show vlan brief",use_textfsm=True)
+            if vlan_details:
+                table_data =[]
+                for data in vlan_details:
+                    row = [data.get("vlan_id"),
+                           data.get("name"),
+                           data.get("status"),
+                           data.get("ports"),
+                           ]
+                    table_data.append(row)
+                self.display_table(data=table_data,headers=["Vlan_Id","Vlan Name","Vlan Status","Vlan Ports"]) 
+
         except Exception as e:
             print(f"This is the exception from the configure vlan menu item",e)
 
@@ -35,12 +46,6 @@ class Configure_Vlan(Main_Menu,Common_Methods):
         """
         self.clear_screen()
         self.display_main_menu()
-        if isinstance(self.netmiko_connection,object):
-            result = self.commands_send(command="show ip interface brief",device=self.netmiko_connection)
-            print(result)
-        elif isinstance(self.netmiko_connection,list):
-            output = self.parallelDeviceCommand(device_list=self.netmiko_connection,command_list="show ip interface brief")
-            print(output)
     
     def __call__(self,connection) -> Any:           ##Callable object
         self.netmiko_connection = connection

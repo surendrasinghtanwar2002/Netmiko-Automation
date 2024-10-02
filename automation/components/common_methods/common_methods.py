@@ -150,11 +150,25 @@ class Common_Methods(Text_Style):
         except Exception as e:
             print("In this exception occurs of the function",e)
 
-    def gettableview_output(self):
+    def display_table(self,data: list, headers: list, table_format: str = "heavy_grid", primary_text_color: str = "yellow") -> None:
+        """
+        Function to display data in a table format.
+        
+        Arguments:
+        - data : list : A list of lists containing the data to be displayed.
+        - headers : list : A list of strings for the table headers.
+        - table_format : str : Format of the table (default is "heavy_grid").
+        - primary_text_color : str : Color for the primary text output (default is "yellow").
+        """
         try:
-            print("This will print the output in the table format")
+            # Format the table data
+            table_output = tabulate(data, headers, tablefmt=table_format)
+            self.common_text(primary_text=f"{table_output}", primary_text_color=primary_text_color)
         except Exception as e:
-            print(f"This is the exception of the function")
+            self.common_text(
+                primary_text=Text_File.exception_text["common_function_exception"],
+                secondary_text=f"{__name__, e}"
+            )
     
     def parallelDeviceCommand(self, device_list: list, command_list: str | list, configuration: bool = False):
             """
