@@ -9,8 +9,8 @@ class Configure_Vlan(Main_Menu,Common_Methods):
     def __init__(self) -> None:
         self.netmiko_connection = None
         self.Vlan_Menu_Items = ["Show Vlan Brief","Configure Vlan","Exit"]  
-        self.Vlan_event_handlers= {"1":self.configure_vlan,
-                                   "2":self.showvlan_details,
+        self.Vlan_event_handlers= {"1":self.showvlan_details,
+                                   "2":self.configure_vlan,
                                    "3":self.exit_menu
                                    }         
         ##Passing the value to the super class   
@@ -29,10 +29,13 @@ class Configure_Vlan(Main_Menu,Common_Methods):
                            data.get("ports"),
                            ]
                     table_data.append(row)
-                self.display_table(data=table_data,headers=["Vlan_Id","Vlan Name","Vlan Status","Vlan Ports"]) 
+                self.display_table(data=table_data,headers=["Vlan_Id","Vlan Name","Vlan Status","Vlan Ports"])
 
+            else:
+                print("Not returned anything still working on that")
+                return False
         except Exception as e:
-            print(f"This is the exception from the configure vlan menu item",e)
+            print(f"This is the exception from the show vlan details menu item",e)
 
     def configure_vlan(self):
         try:
