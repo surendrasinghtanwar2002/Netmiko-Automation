@@ -152,64 +152,68 @@ class Common_Methods(Text_Style):
 
 
             #######################################***&&&&&****((((((((((((((((We need to work from here because paralle device commands is still not working properly))))))))))))))))
-    def parallelDeviceCommand(self,device_list:list,command_list:str | list):
-        """
-            Sends a commands or a list of commands parallerly to a list of device and waits for a user prompt if one is avilable.
-            
-            Args:
-                 device_list : Netmiko Device List object
-                 commands_list : A list of commands to pass to multiple devices
-        """
-        try:
-            with ThreadPoolExecutor(max_workers=5) as executor:
-                self.netmiko_devices_connection = list(executor.map(self.commands_send, device_list,command_list))
-        except Exception as e:
-            print(f"This is the exception of the function",e)
-
-    def commands_send(self,commands:str | list,configuration:bool=False):
-        """
-            Sends a command or a list of commands to the device and waits for a user prompt if one is available.
-
-            Args:
-                commands (str | list): The command(s) to be sent. 
-                                        If a single command is provided, it should be a string. 
-                                        If multiple commands are to be sent, provide them as a list of strings.
-
-            Returns:
-                str: The output received from the device after sending the command(s).
-                
-            Raises:
-                ValueError: If the input is neither a string nor a list of strings.
+    def parallelDeviceCommand(self, device_list: list, command_list: str | list, configuration: bool = False):
             """
-        user_pattern = r"^(.*?\[confirm\].*?|.*?\?.*?)$"            ##Regex Pattern for searching a string in the raw data
-        final_output = ""
-        try:
-            print("We can configure the commands")
-            if isinstance(commands,str) and configuration == False:
-                output = self.netmiko_connection.send_config_set(commands) if configuration else self.netmiko_connection.send_command_timing(commands)
-                result = self.patternExplorer(Pattern=user_pattern,Raw_Data=output)
-                if result:
-                    final_output += f"----------- Host {self.netmiko_connection.host} ----------- \n{result}"       ##It will store the details
-                    return final_output
-                else:
-                    final_output += f"----------- Host {self.netmiko_connection.host} ----------- \n{result}"
+            Sends commands or a list of commands in parallel to a list of devices
+            and waits for a user prompt if one is available.
 
-            elif isinstance(commands,list) and configuration == False:
-                for command in commands:
-                    output = self.netmiko_connection.send_config_set(command) if configuration else self.netmiko_connection.send_command_timing(command)
-                    result = self.patternExplorer(Pattern=user_pattern,Raw_Data=output)
-                    if result:
-                       final_output += f"----------- Host {self.netmiko_connection.host} ----------- \n{result}"       ##It will store the details
-                    else:
-                        final_output += f"----------- Host {self.netmiko_connection.host} ----------- \n{result}" 
+            Args:
+                device_list: List of Netmiko Device connection objects
+                command_list: A string command or a list of commands to pass to multiple devices
+                configuration: Whether the commands are configuration commands (default is False)
+            """
+            try:
+                
+                if isinstance(command_list, str):
+                    command_list = [command_list] * len(device_list)  # Duplicate for each device
+                elif isinstance(command_list, list):
+                    command_list = command_list * len(device_list)  # Duplicate the list
+
+                # Create a list of devices corresponding to the command list
+                devices = [device for device in device_list for _ in range(len(command_list) // len(device_list))]
+
+                # Execute commands in parallel
+                with ThreadPoolExecutor(max_workers=5) as executor:
+                    output = list(executor.map(self.commands_send, command_list, [configuration] * len(command_list), devices))
+                return output
+
+            except Exception as e:
+                print(f"This is the exception of the function: {e}")
+                return []
+
+   def commands_send(self, command: str | list, configuration: bool = False, device=None):
+    """
+    Sends a command to a single device.
+
+    Args:
+        command (str | list): The command(s) to be sent (string or list of strings).
+        configuration (bool): Whether the command is a configuration command.
+        device: The device connection object to send the command to.
+    """
+    user_pattern = r"^(.*?\[confirm\].*?|.*?\?.*?)$"  # Regex pattern for user prompts
+    final_output = ""
+
+    try:
+        if isinstance(device, object):  # Ensure device is a valid object
+            if isinstance(command, str):
+                output = device.send_config_set(command) if configuration else device.send_command_timing(command)
+                result = self.patternExplorer(Pattern=user_pattern, Raw_Data=output)
+                final_output += f"----------- Host {device.host} -----------\n{result if result else output}"
                 return final_output
-            
-            else:
-                print("Your given data is not valid")
-                return False
-            
-        except Exception as e:
-            print(f"This is the exception of the function",e)
-    
+
+            elif isinstance(command, list):
+                for cmd in command:
+                    output = device.send_config_set(cmd) if configuration else device.send_command_timing(cmd)
+                    result = self.patternExplorer(Pattern=user_pattern, Raw_Data=output)
+                    final_output += f"----------- Host {device.host} -----------\n{result if result else output}"
+                return final_output
+
+        else:
+            print("Invalid device input")
+            return False
+
+    except Exception as e:
+        print(f"Exception in commands_send function: {e}")
+        return ""
 
 
