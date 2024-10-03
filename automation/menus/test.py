@@ -1,22 +1,44 @@
-# Sample list of dictionaries
-device_list = [
-    {"hostname": "Switch1", "ip_address": "192.168.1.1", "model": "Cisco"},
-    {"hostname": "Router1", "ip_address": "192.168.1.2", "model": "Juniper"},
-    {"hostname": "Switch2", "ip_address": "192.168.1.3", "model": "HP"},
-    {"hostname": "Firewall1", "ip_address": "10.0.0.1", "model": "Fortinet"}
-]
+# from concurrent.futures import ThreadPoolExecutor
+import time
 
-filter_ip = ["192.168.1.1","192.168.1.2","192.168.1.3"]
+# # Example function to process items from the second list with the current item from the first list
+# def process_items(item1, item2):
+#     time.sleep(1)  # Simulating a time-consuming task
+#     return f'Processed {item1} with {item2}'
+
+# # Main execution function
+# def execute_with_control(list1, list2):
+#     results = []
+    
+#     with ThreadPoolExecutor(max_workers=5) as executor:
+#         for item1 in list2:
+#             # For each item in the first list, submit tasks for all items in the second list
+#             futures = [executor.submit(process_items, item1, item2) for item2 in list1]
+#             for future in futures:
+#                 results.append(future.result())  # Collect results as they complete
+
+#     # Print all results
+#     for result in results:
+#         print(result)
+
+# # Example usage
+# list1 = ["show ip itnerface brief","show running config","show vlan brief"]  # First list
+# list2 = ['netmiko_object_1', 'netmiko_object_2', 'netmiko_object_3']  # Second list
+
+# execute_with_control(list1, list2)
 
 
-valid_host = []
+# import time
+# timestr = time.strftime("%Y%m%d-%H%M%S")
+# final_final_name = f"Today Backup {timestr}"
+# print(final_final_name)
 
-for items in device_list:
-    for valid_ip in filter_ip:
-        if items["ip_address"] == valid_ip:
-            valid_host.append(items)
+
+def write_backup_configuration(self):
+    timestr = time.strftime("%Y%m%d-%H%M%S")
+    final_final_name = f"Today Backup {timestr}"
+    with(final_final_name,"w") as file:
+        if file.write("hello world my name is surendra"):
+            print("Yes file have been created")
         else:
-            print("items not found")
-
-# if __name__ == "__main__":
-print(valid_host)
+            print("File is not creatd")

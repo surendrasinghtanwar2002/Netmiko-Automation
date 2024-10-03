@@ -53,7 +53,8 @@ class Text_File:
         "show_interface_details":"This is your interface details",
         "json_to_python_object":"Convert the Json String to Python object",
         "object_to_json_string":"Convert the Python Object to Json String",
-        "valid_option_warn":"Please choose a valid option from the menu"
+        "valid_option_warn":"Please choose a valid option from the menu",
+        "File_Creation_Again":"File Creation process started again"
     }
     ##common exception text
     exception_text ={
@@ -77,7 +78,9 @@ class Text_File:
         "paramiko_auth_exception":"Paramiko auth exception have arrived connection not established succesfully",
         "Type_error":"Type error have been occrued",
         "Module_error":"Module not found please check it",
-        "sub_process_exception":"The sub process module have occured a exception please check it"
+        "sub_process_exception":"The sub process module have occured a exception please check it",
+        "File_Creation_Max_Limit":"We have reached our limit to create the file but file is not being created",
+        "IOerror":"Error occurred while accessing the file. Please check the file path and permissions"
     }
     #threadpool module exception text
     threadpool_module_exception_text = {
@@ -101,7 +104,8 @@ class Text_File:
         "Unvalid_ip_address":"Your IP Address is not valid",
         "Device invalid":"Device is not reachable",
         "Connectivity_Issue":"Please Check your internet connection or device reachability",
-        "callable_error":"Class does not have a `__call__` method"
+        "callable_error":"Class does not have a `__call__` method",
+        "Failed_File_Creation":"Failed to create the file process"
     }
     ##debug text
     debug_text = {

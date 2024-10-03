@@ -54,6 +54,9 @@ def NetmikoException_Handler(method: any):
                 secondary_text=__name__
             )
             return False
+        except IOError as ioerror:
+            Text_Style.ExceptionTextFormatter(primary_text=Text_File.exception_text["IOerror"],secondary_text=ioerror)
+            
         except Exception as e:
             # Catch any other unexpected exceptions
             Text_Style.common_text(
@@ -61,6 +64,7 @@ def NetmikoException_Handler(method: any):
                 secondary_text=str(e)
             )
             return False
+        
 
     return wrapper
 
@@ -110,6 +114,8 @@ def Regular_Exception_Handler(method: any):
         except ModuleNotFoundError as moduleerror:
             Text_Style.ExceptionTextFormatter(primary_text=Text_File.exception_text["Module_error"], secondary_text=moduleerror)
             return False
+        except IOError as ioerror:
+            Text_Style.ExceptionTextFormatter(primary_text=Text_File.exception_text["IOerror"],secondary_text=ioerror)
     return wrapper
 
 def ThreadPoolExeceptionHandler(method):
@@ -128,6 +134,10 @@ def ThreadPoolExeceptionHandler(method):
         except ValueError as value:
             Text_Style.ExceptionTextFormatter(primary_text=Text_File.threadpool_module_exception_text["ValueError"],secondary_text=value)
             return False
+        except IOError as ioerror:
+            Text_Style.ExceptionTextFormatter(primary_text=Text_File.exception_text["IOerror"],secondary_text=ioerror)
+
+    return wrapper
         
            
 
