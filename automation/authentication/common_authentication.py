@@ -1,4 +1,4 @@
-from maskpass import askpass
+from maskpass import askpass,advpass
 from time import sleep
 from typing import List
 from assets.text_file import Text_File
@@ -29,31 +29,37 @@ class Authentication(Text_Style):
        os.system('cls' if platform.system() == 'Windows' else 'clear')
 
     @staticmethod       
-    def ip_address_validation(ip_address: str | list)->list:
-        param = '-n' if platform.system().lower() == 'win32' else '-c'
-        valid_ip_addresses = []  ## valid IP address list 
+    def ip_address_validation(ip_address: str | list) -> list:
+        param = '-n' if platform.system().lower() == 'windows' else '-c'
+        valid_ip_addresses = []  # Valid IP address list
+        
         try:
             if isinstance(ip_address, str):
+                # Single IP address case
                 host = ip_address
                 command = ["ping", param, "2", host]
-                if subprocess.call(command) == 0:
-                    return ip_address
+                result = subprocess.call(command)  # Call the ping command
+                if result == 0:
+                    return [ip_address]  # Return as a list if valid
                 else:
-                    return False
+                    return False  # Invalid IP address
             elif isinstance(ip_address, list):
-                print("Multiple IP Address Pinging Method")  ## Debug purpose
+                # Multiple IP addresses case
+                print("Multiple IP Address Pinging Method")  # Debugging print
                 for ip in ip_address:
                     host = ip
                     command = ["ping", param, "2", host]
-                    if subprocess.call(command) == 0:
-                        valid_ip_addresses.append(ip)  ## Append valid IP addresses
+                    result = subprocess.call(command)
+                    if result == 0:
+                        valid_ip_addresses.append(ip)  # Append valid IP address
                     else:
                         print(f"IP Address is not valid: {ip}")
-                return valid_ip_addresses
+                return valid_ip_addresses  # Return the list of valid IPs
             return []
         except subprocess.CalledProcessError as processerror:
             print(f'Function: {__name__}, Exception: {type(processerror).__name__}')
             return []
+
     
     def Table_View_Output(self, 
                           table_header: List[str] = None, 

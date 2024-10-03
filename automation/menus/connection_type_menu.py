@@ -2,6 +2,7 @@
 from .main_menu import Main_Menu
 from typing import List
 from automation.authentication.common_authentication import Authentication
+from automation.components.common_decorator.common_decorator import NetmikoException_Handler,Regular_Exception_Handler
 from netmiko import ConnectHandler
 from assets.text_file import Text_File
 from state.global_State_Manger import Global_State_Manager
@@ -20,39 +21,33 @@ class Connection_type_menu(Main_Menu,Authentication):
         super().__init__(menu_items=menu_items if menu_items else self.connectiontype_menu_items, 
                  event_handlers=event_handlers if event_handlers else self.connection_type_event_handlers)
 
+    @Regular_Exception_Handler
     def next_screen(self,connectiontype:object | List[object])->None:            ##overide the original method
-        try:
             from .script_menu import Script_Menu
             next__display = Script_Menu()
             next__display.display_main_menu(netmiko_type=connectiontype)
-        except Exception as e:
-            self.common_text(primary_text=Text_File.common_text["common_function_exception"],secondary_text=e,secondary_text_style="bold")
 
     ## Single device connection method
+    @NetmikoException_Handler
     def __single_device_connection(self):
-        try:
-            result = self.progress_bar(Progessbar_name="Loading your Next Screen")
-            if result:
-                self.clear_screen()
-                self.common_text(primary_text=Text_File.common_text["Single_device"],primary_text_color="red",primary_text_style="bold")
-                auth_data = self._single_device_auth_data()
-                if auth_data:
-                    connection = ConnectHandler(**auth_data)
-                try:    
-                    if connection:
-                        result = Global_State_Manager.Netmiko_State_Push_Manager(device=connection)
-                        if result:
-                            self.common_text(primary_text=Text_File.common_text["successful_state_update"],primary_text_color="green")
-                            self.next_screen(connectiontype=connection)               ##Passing netmiko connection object  prop        
+        result = self.progress_bar(Progessbar_name="Loading your Next Screen")
+        if result:
+            self.clear_screen()
+            self.common_text(primary_text=Text_File.common_text["Single_device"],primary_text_color="red", primary_text_style="bold")
+            auth_data = self._single_device_auth_data()
+            if auth_data:
+                connection = ConnectHandler(**auth_data)
+                if connection:
+                    result = Global_State_Manager.Netmiko_State_Push_Manager(device=connection)
+                    if result:
+                        self.common_text(primary_text=Text_File.common_text["successful_state_update"], 
+                                                    primary_text_color="green")
+                        self.next_screen(connectiontype=connection)  # Passing Netmiko connection object
                     else:
                         self.common_text(secondary_text=Text_File.error_text["Device invalid"])
-                except Exception as e:
-                    print("This is the exception of the function")
-                    return self.display_main_menu()
-        except Exception as e:
-            self.common_text(primary_text=Text_File.exception_text["common_function_exception"],secondary_text=e)
 
     ##Method for multiple device connection
+    @NetmikoException_Handler
     def __netmiko_connection(self, device) -> object:
         try:
             with ConnectHandler(**device) as connection:
@@ -106,6 +101,7 @@ class Connection_type_menu(Main_Menu,Authentication):
             self.common_text(primary_text=Text_File.exception_text["common_function_exception"],secondary_text=e,secondary_text_style="bold")
 
     ## Multiple device connection method
+    @NetmikoException_Handler
     def __multiple_device_connection(self):
         try:
             # Show progress bar before moving to the next screen

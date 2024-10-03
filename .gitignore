@@ -2,6 +2,7 @@
 .gitignore
 # Ignore __pycache__ directories
 __pycache__/
+.env
 
 # Ignore .pyc files
 *.pyc

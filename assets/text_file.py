@@ -55,20 +55,40 @@ class Text_File:
         "object_to_json_string":"Convert the Python Object to Json String",
         "valid_option_warn":"Please choose a valid option from the menu"
     }
-    ##common text
+    ##common exception text
     exception_text ={
         "common_function_exception": f"Your function have exception {__name__}",
         "value_error":"You have passed wrong value",
         "CalledProcessError":"Subprocess Exception occured",
         "file_not_found":f"File not Founded Exception in {__name__}",
-        "os exception":"Os exception arrived",
+        "os_exception":"Os exception arrived",
+        "KeyboardInterrupt":"Execution was interrupted by the user. The ongoing tasks may not have completed successfully.",
         "connection_failed":"Failed to connect the device",
         "type_error":f"Type error found in the your function {__name__}",
         "progress_bar_failed":"Progress bar failed or was canceled.",
         "instance_error":"Error occured while calling the instance",
         "json_to_python_object_error":"Your given data is not Json String please check it",
-        "Python_object_to_json_error":"Your give data is not Python object please check it"
-
+        "Python_object_to_json_error":"Your give data is not Python object please check it",
+        "No_valid_connector":"Netmiko have found no valid connector please check",
+        "Netmiko_Timeout_Exception":"Netmiko Time exceout exception have arrived and connection is not established properly",
+        "Netmiko_Base_Exception":"Netmiko Base Exception have been arrived",
+        "Netmiko_Authentication_exception":"Netmiko authentication exception have been arrived connection not established",
+        "ssh_exception":"Paramiko ssh exception have been arrived",
+        "paramiko_auth_exception":"Paramiko auth exception have arrived connection not established succesfully",
+        "Type_error":"Type error have been occrued",
+        "Module_error":"Module not found please check it",
+        "sub_process_exception":"The sub process module have occured a exception please check it"
+    }
+    #threadpool module exception text
+    threadpool_module_exception_text = {
+        "Cancelled_Error":"The task was cancelled and cannot be completed. Please check the task status.",
+        "TimeoutError":"The task has timed out. It took too long to complete. Please try again or check your network conditions.",
+        "BrokenExecutor":"An error has occurred in the executor, preventing further tasks from being executed. Please restart the process.",
+        "ValueError": "Invalid argument provided in ThreadPool excecutor {error}. Please check your input values and try again.",
+        "TypeError": "A type error occurred: {error}. Ensure that the function submitted is callable and that the arguments are of the correct type.",
+        "KeyboardInterrupt":"Execution was interrupted by the user. The ongoing tasks may not have completed successfully.",
+        "RuntimeError":"The ThreadPoolExecutor has already been shut down and cannot be reused. Please create a new executor instance for further tasks.",
+        "ImportError":"Failed to import a required module: {error}. Ensure that all dependencies are correctly installed and accessible."
     }
 
     ##error text
