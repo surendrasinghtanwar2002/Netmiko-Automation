@@ -24,7 +24,7 @@ class Authentication(Text_Style):
         """
         sleep(time)
 
-    @staticmethod
+    @staticmethod fdsfas
     def clear_screen()->None:
        os.system('cls' if platform.system() == 'Windows' else 'clear')
 
