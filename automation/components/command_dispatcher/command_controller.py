@@ -6,14 +6,30 @@ from components.common_decorator.common_decorator import Regular_Exception_Handl
 import time
 
 class Command_Controller(Text_Style):
+    """
+    Manages the execution of commands on Netmiko connections and handles device configuration backups.
+
+    This class supports both single and multiple Netmiko connections, enabling command execution,
+    concurrent processing with threading, and backup of device configurations to timestamped files.
+    """
     def __init__(self,netmiko_connection:str | list, commands: str | list) -> None:
         self.netmiko_connection = netmiko_connection
         self.commands = commands
         self.device_backup = None           ##By default device_backup is empty
-        self.backup_command = "show running-config"
+        self.backup_command = "show running-config"         ##Backup command
 
     @ThreadPoolExeceptionHandler
     def execute_with_control(self):
+        """
+        Executes commands on multiple Netmiko connections concurrently using a ThreadPoolExecutor.
+
+        If a single command string is provided, it converts it into a list for processing.
+        For each connection in the Netmiko connection list, it submits the commands to the executor
+        and collects the results as they complete.
+
+        Returns:
+            list: A list of results from the executed commands for each connection.
+        """
         results = []
         with ThreadPoolExecutor(max_workers=5) as executor:
             if isinstance(self.commands,str):
@@ -29,6 +45,16 @@ class Command_Controller(Text_Style):
 
     @Regular_Exception_Handler
     def send_command(self):
+        """
+        Sends commands to the Netmiko connection and retrieves the results.
+
+        If a single command string is provided, it sends that command directly.
+        If a list of commands is provided, it sends each command sequentially and
+        concatenates the results into a single string.
+
+        Returns:
+            str or bool: The command result(s) as a string if successful, or False if the input is invalid.
+        """
         final_result = " "              ##Final result for the multiple commands
         if isinstance(self.commands,str):
             command_result = self.netmiko_connection.send_command(self.commands)
@@ -43,7 +69,17 @@ class Command_Controller(Text_Style):
         
     @Regular_Exception_Handler
     def manage_connection_execution(self):
+        """
+        Manages the execution of commands based on the type of Netmiko connection.
+
+        If a single Netmiko connection object is provided, it sends commands directly.
+        If a list of Netmiko connections is provided, it utilizes multithreading to execute commands on all connections.
+
+        Returns:
+            list or bool: Command responses if successful, or False if execution fails.
+        """
         if isinstance(self.netmiko_connection,object):
+            print("Here we will call the backup device configuration before this so we can backup the device configuration before storing the data")
             command_response = self.send_command()
             if command_response:
                 return command_response
@@ -51,6 +87,7 @@ class Command_Controller(Text_Style):
                 return False
             
         elif isinstance(self.netmiko_connection,list):
+            print("We will also call that method and method is being already created **************************")
             command_response = self.execute_with_control()
             if command_response:
                 return command_response
@@ -59,6 +96,15 @@ class Command_Controller(Text_Style):
     
     @Regular_Exception_Handler
     def write_backup_configuration(self):
+        """
+        Writes the device backup configuration to a timestamped file.
+        
+        The filename is generated based on the current date and time. 
+        If the file is successfully created and written, a success message is displayed.
+        
+        Returns:
+            bool: True if the file is created successfully, False otherwise.
+        """
         timestr = time.strftime("%Y%m%d-%H%M%S")
         final_final_name = f"Today Backup {timestr}"
         with(final_final_name,"w") as file:
@@ -71,6 +117,16 @@ class Command_Controller(Text_Style):
 
     @NetmikoException_Handler
     def generate_config_backup(self):
+        """
+        Backs up the device configuration by executing 'show running-config'.
+        
+        Supports both single and multiple Netmiko connections. For single devices, 
+        it attempts to save the configuration up to three times if initial attempts fail. 
+        For multiple devices, it uses a ThreadPoolExecutor to gather configurations concurrently.
+        
+        Returns:
+            bool: True if the backup is successful, False otherwise.
+        """
         counter = 0
         max_counter = 3
         if isinstance(self.netmiko_connection,object):                      ##Condition for single netmiko connection object
