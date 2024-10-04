@@ -1,30 +1,20 @@
-# import re
-import time
-# # Example multiline string
-# text = """Proceed with reload? [confirm]
-# This is a test line.
-# Another line without prompts.
-# Enter username: [confirm]
-# Final line?"""
+class A:
+    def __init__(self, command):
+        self.command = command
+    
+    def checkingcondition(self):
+        return(f"We have printed hello {self.command}")
 
-# # Regex pattern to match lines with [confirm] or ?
-# pattern = r'^(.*?\[confirm\].*?|.*?\?.*?)$'
+class B(A):
+    def __init__(self,):
+        pass
 
-# # Find all matching lines
-# matches = re.findall(pattern, text, re.MULTILINE)
+    def calling_parentclass(self):
+        for items in range(20):
+            super().__init__(items)
+            print(self.checkingcondition())
+    
 
-# # Print the matching lines for user input
-# for match in matches:
-#     print(match.strip())
-
-def write_backup_configuration():
-    timestr = time.strftime("%Y%m%d-%H%M%S")
-    final_final_name = f"Today Backup {timestr}"
-    with open(final_final_name,"w") as file:
-        if file.write("hello world my name is surendra"):
-            print("Yes file have been created")
-        else:
-            print("File is not creatd")
-
-if __name__ == "__main__":
-    write_backup_configuration()
+# Create an instance of class B, passing arguments for A's attributes
+t1 = B()
+t1.calling_parentclass()

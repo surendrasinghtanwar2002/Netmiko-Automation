@@ -24,11 +24,13 @@ class Text_File:
         "proceed_confirmation":"Do you want to proceed (Yes/No):-",
         "Data_retrieved":"Succesfully Data have been retrieved".center(shutil.get_terminal_size().columns,"!"),
         "Successful_File_Creation":"Your File Have been created Succesfully".center(shutil.get_terminal_size().columns,"!"),
+        "successful_backup":"Your backup file have been created succesfully".center(shutil.get_terminal_size().columns,"!"),
         "File_save_permission":"Do you want to say to your file (Yes/No):- ",
         "Json_conversion_permission":"Do you want to convert raw data into json",
         "successful_state_update":" Netmiko Global State Have been updated succesfully ".center(shutil.get_terminal_size().columns,"!"),
         "Exit_Permission":"Do you want to exit from the menu (Yes/No):- ",
         "User_choice":"Enter your choice:- ",
+        "succesful_found_prompt":"We have found prompt in the basic prompt handler and we are proceding with our task",
         "user_choice_no":"Enter your choice (eg:- 1,2,3):-",
         "vlan_configuration_permission":"Do you want to make configuration in Vlan (Yes/No):-",
         "vlan_starting_range":"Enter your vlan starting range:-",
@@ -54,7 +56,9 @@ class Text_File:
         "json_to_python_object":"Convert the Json String to Python object",
         "object_to_json_string":"Convert the Python Object to Json String",
         "valid_option_warn":"Please choose a valid option from the menu",
-        "File_Creation_Again":"File Creation process started again"
+        "File_Creation_Again":"File Creation process started again",
+        "Continue_without_backup":"Do you want to continue without backup (Yes/No):- ",
+        "command_excuted":" Your all commands are executed on the server succesfully ".center(shutil.get_terminal_size().columns,"#"),
     }
     ##common exception text
     exception_text ={
@@ -98,6 +102,7 @@ class Text_File:
     error_text = {
         "device_details_error":"!!! You have provided wrong details of the device !!!".center(shutil.get_terminal_size().columns),
         "limit_exceed":"You have reached your limit",
+        "error_command_excuted":" Your commands are not executed on the server so we are quitting out from the script ".center(shutil.get_terminal_size().columns,"#"),
         "Unsuccessful_File_Creation":"Your File Have not been created",
         "wrong_value":"You have provided the wrong value",
         "menu_wrong_input":"Your given input is not presented in the menu",
@@ -105,7 +110,9 @@ class Text_File:
         "Device invalid":"Device is not reachable",
         "Connectivity_Issue":"Please Check your internet connection or device reachability",
         "callable_error":"Class does not have a `__call__` method",
-        "Failed_File_Creation":"Failed to create the file process"
+        "Failed_File_Creation":"Failed to create the file process",
+        "unsuccessful_backup":"Your backup file is not being created".center(shutil.get_terminal_size().columns,"!"),
+        "unsuccesful_prompt":"We are not able to find any prompt"
     }
     ##debug text
     debug_text = {
