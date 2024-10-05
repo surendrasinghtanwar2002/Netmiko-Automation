@@ -89,7 +89,7 @@ class Main_Menu(Text_Style):
 
     @timeexecution
     def display_main_menu(self) -> None:
-        self.clear_screen()
+        # self.clear_screen()
         while True:
             self.render_menu_items(menu_items=self.menu_items)
             choice_value = self.check_user_choice()
