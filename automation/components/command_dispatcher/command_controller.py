@@ -15,9 +15,10 @@ class Command_Controller(Prompt_Manager):
     This class supports both single and multiple Netmiko connections, enabling command execution,
     concurrent processing with threading, and backup of device configurations to timestamped files.
     """
-    def __init__(self,netmiko_connection:str | list, commands: str | list) -> None:
+    def __init__(self,netmiko_connection:str | list) -> None:
         self.netmiko_connection = netmiko_connection
-        self.commands = commands
+        self.configuration = False              ## Used for making condition command is configuration command or basic command
+        self.commands = None
         self.device_backup = None           ##By default device_backup is empty
         self.backup_command = "show running-config"         ##Backup command
 
@@ -60,18 +61,30 @@ class Command_Controller(Prompt_Manager):
         """
         final_result = " "              ##Final result for the multiple commands
         if isinstance(self.commands,str):
-            command_result = self.netmiko_connection.send_command(self.commands)
-            return command_result
+            command_result = self.netmiko_connection.send_config_set(self.command) if self.configuration else self.netmiko_connection.send_command(self.commands)
+            super().__init__(command,command_result)            ##passing value into super class
+            result = self.PromptNavigator()
+            if result:
+                self.common_text(primary_text=Text_File.common_text["Your command have been succesfully performed on the server"])
+                return command_result
+            else:
+                return False
+            
         elif isinstance(self.commands,list):
             for command in self.commands:
-                command_result = self.netmiko_connection.send_command(command)
-                final_result += command_result + "\n"
+                command_result = self.netmiko_connection.send_config_set(self.command) if self.configuration else self.netmiko_connection.send_command(self.commands)
+                result = super().__init__(command,command_result)
+                if result:
+                    final_result += command_result + "\n"
+                else:
+                    self.common_text(primary_text=Text_File.common_text["Your command is not being executed succesfully"],secondary_text=command)
+                    continue            ##skip and moving to the next command
             return final_result
         else:
             return False
         
     @Regular_Exception_Handler
-    def manage_connection_execution(self):              ##Main method which is calling all other method respectively
+    def manage_connection_execution(self,command:str | list,configuration_command: bool = False):              ##Main method which is calling all other method respectively
         """
         Manages the execution of commands based on the type of Netmiko connection.
 
@@ -81,6 +94,9 @@ class Command_Controller(Prompt_Manager):
         Returns:
             list or bool: Command responses if successful, or False if execution fails.
         """
+        self.command = command                  ##Passing the command to the constructor method
+        self.configuration = configuration_command
+
         if isinstance(self.netmiko_connection,object):
             result = self.generate_config_backup()              ##This method is being used to backup the current configuration of device before making any changes
             if result:

@@ -1,32 +1,54 @@
-
+from typing import Any
+from components.common_decorator.common_decorator import Regular_Exception_Handler
+from automation.menus.main_menu import Main_Menu
+from automation.components.command_dispatcher.command_controller import Command_Controller
 from assets.text_file import Text_File
-import automation.components.etherchannel_functions as modules
-import sys
 
-handlerfunction_items = {"1":modules.etherchannel_functions.show_etherchannel_details,"2":modules.etherchannel_functions.configure_etherchannel,"3":modules.etherchannel_functions.exitmenu}
+class ConfigureVlan(Main_Menu,Command_Controller):
+    def __init__(self) -> None:
+        self.vlan_netmiko_connection = None              #It will hold the netmiko connection object
+        self.Configure_Vlan_Menu_Item = ["Show Vlan","Add Vlan","Delete Vlan","Exit"]
+        self.Configure_Vlan_Event_Handler = {
+            "1": self.showvlan,
+            "2": self.Add_Vlan,
+            "3": self.exit_menu
+            }
+        
+        Main_Menu.__init__(self,menu_items=self.Configure_Vlan_Menu_Item,event_handlers=True)                   ##Calling constructor of Main Menu Class
+        Command_Controller.__init__(self,netmiko_connection=self.vlan_netmiko_connection)      
 
-
-etherchannel_menu_items = ["Show EtherChannel","Configure EtherChannel","Exit"]
-
-##EtherChannel Function
-def Etherchannel(netmiko_connection)->None:
-    try:
-        print("Here we will call the menu rendered function")
-        modules.etherchannel_functions.menu_renderer(data=etherchannel_menu_items)  ##need to change
-        handler_key = input(Text_File.common_text["user_choice_no"])
-        result = modules.etherchannel_functions.handlerfunction(key=handler_key,handler_functions_list=handlerfunction_items,connection = netmiko_connection)
+    @Regular_Exception_Handler              
+    def showvlan(self):
+        result = self.manage_connection_execution(command="show vlan brief")
         if result:
-            return result       ##If result is True
+            self.common_text(primary_text=Text_File.common_text["Command_ouput_message"],secondary_text=result)
         else:
-            sys.exit()          ##If result is False
+            self.ExceptionTextFormatter(primary_text=Text_File.common_text["unsuccesful_command_execution"])
+    
 
-    except Exception as e:
-        print(Text_File.exception_text["common_function_exception"],e)
+    @Regular_Exception_Handler
+    def __Single_Vlan(self):
+        user_vlan_choice = int(input(self.common_text(primary_text=Text_File.common_text["vlan_interface"])).strip())
+        command = f"vlan {user_vlan_choice}"
+        if user_vlan_choice:
+            result = self.manage_connection_execution(command=command,configuration_command=True)
+            if result:
+                print(f"We have configure the vlan succesfully:- {result}")
+            else:
+                print(f"We are not able to configure the vlan succesfully")
 
-##Main Function
-def main(connection:object)->None:
-    return Etherchannel(connection)
-
-##Calling the Main Function
-if __name__ == "__main__":
-    result = main()
+    @Regular_Exception_Handler
+    def Add_Vlan(self):
+        user_choice = int(input(self.common_text(primary_text=Text_File.common_text["vlan_create_range"])).strip())
+        if user_choice and user_choice == 1:
+            self.__Single_Vlan()
+        elif user_choice and user_choice == 2:
+            print("we will do nothing on the device")
+    
+    @Regular_Exception_Handler
+    def Delete_Vlan(self):
+        print("In this section we will delete the vlan")
+        
+    def __call__(self,connection) -> Any:           ##Callable object
+        self.vlan_netmiko_connection = connection
+        self.display_main_menu()

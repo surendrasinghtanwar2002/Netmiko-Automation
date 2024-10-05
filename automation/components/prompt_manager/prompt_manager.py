@@ -75,7 +75,7 @@ class Prompt_Manager(Text_Style):
                 print(f"Error detected for command: {self.command}")
                 user_choice = input("An error occurred. Do you want to continue (yes/no)? ").strip().lower()
 
-                if user_choice == "no":
+                if user_choice == "yes":
                     sys.exit(self.common_text(primary_text=Text_File.common_text["greeting_user"],
                                               primary_text_color="green",
                                               primary_text_style="italic",

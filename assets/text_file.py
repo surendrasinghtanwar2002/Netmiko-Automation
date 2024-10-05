@@ -59,6 +59,7 @@ class Text_File:
         "File_Creation_Again":"File Creation process started again",
         "Continue_without_backup":"Do you want to continue without backup (Yes/No):- ",
         "command_excuted":" Your all commands are executed on the server succesfully ".center(shutil.get_terminal_size().columns,"#"),
+        "Command_ouput_message":"This is your output:- "
     }
     ##common exception text
     exception_text ={
@@ -112,7 +113,8 @@ class Text_File:
         "callable_error":"Class does not have a `__call__` method",
         "Failed_File_Creation":"Failed to create the file process",
         "unsuccessful_backup":"Your backup file is not being created".center(shutil.get_terminal_size().columns,"!"),
-        "unsuccesful_prompt":"We are not able to find any prompt"
+        "unsuccesful_prompt":"We are not able to find any prompt",
+        "unsuccesful_command_execution":"Command is not executed succesfully"
     }
     ##debug text
     debug_text = {
