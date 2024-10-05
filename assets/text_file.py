@@ -59,7 +59,8 @@ class Text_File:
         "File_Creation_Again":"File Creation process started again",
         "Continue_without_backup":"Do you want to continue without backup (Yes/No):- ",
         "command_excuted":" Your all commands are executed on the server succesfully ".center(shutil.get_terminal_size().columns,"#"),
-        "Command_ouput_message":"This is your output:- "
+        "Command_ouput_message":"This is your output:- ",
+        "Loading_Screen":"Loading your Next Screen Please wait ......."
     }
     ##common exception text
     exception_text ={
@@ -114,7 +115,9 @@ class Text_File:
         "Failed_File_Creation":"Failed to create the file process",
         "unsuccessful_backup":"Your backup file is not being created".center(shutil.get_terminal_size().columns,"!"),
         "unsuccesful_prompt":"We are not able to find any prompt",
-        "unsuccesful_command_execution":"Command is not executed succesfully"
+        "unsuccesful_command_execution":"Command is not executed succesfully",
+        "Error_in_script":-"Script got crashed due to some technical issue",
+        "User_Auth_Data_error":"Authenitcation data is not valid please try again"
     }
     ##debug text
     debug_text = {

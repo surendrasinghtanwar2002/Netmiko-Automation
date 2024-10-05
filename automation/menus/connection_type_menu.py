@@ -7,6 +7,7 @@ from netmiko import ConnectHandler
 from assets.text_file import Text_File
 from state.global_State_Manger import Global_State_Manager
 from concurrent.futures import ThreadPoolExecutor
+import sys
 
 class Connection_type_menu(Main_Menu,Authentication):
     def __init__(self,menu_items=None, event_handlers=None) -> None:
@@ -22,15 +23,41 @@ class Connection_type_menu(Main_Menu,Authentication):
                  event_handlers=event_handlers if event_handlers else self.connection_type_event_handlers)
 
     @Regular_Exception_Handler
-    def next_screen(self,connectiontype:object | List[object])->None:            ##overide the original method
-            from .script_menu import Script_Menu
-            next__display = Script_Menu()
-            next__display.display_main_menu(netmiko_type=connectiontype)
+    def next_screen(self,connectiontype:object | List[object])->None:      
+        """
+        Displays the script menu based on the selected connection type.
+
+        This method overrides the original `next_screen` method. It imports the `Script_Menu` 
+        class and creates an instance of it, then calls its `display_main_menu()` method, 
+        passing the specified `connectiontype`.
+
+        Args:
+            connectiontype (object | List[object]): The connection type or types to be used in the 
+            script menu display.
+
+        Returns:
+            None
+        """    
+        from .script_menu import Script_Menu
+        next__display = Script_Menu()
+        next__display.display_main_menu(netmiko_type=connectiontype)
 
     ## Single device connection method
     @NetmikoException_Handler
     def __single_device_connection(self):
-        result = self.progress_bar(Progessbar_name="Loading your Next Screen")
+        """
+        Establishes a connection to a single network device and updates the global state.
+
+        This method displays a loading screen and prompts the user to authenticate 
+        for a single device connection. It retrieves authentication data, establishes 
+        a connection using Netmiko's `ConnectHandler`, and updates the global state 
+        manager with the connection. If successful, it navigates to the next screen; 
+        otherwise, it displays error messages.
+
+        Returns:
+            None
+        """
+        result = self.progress_bar(Progessbar_name=Text_File.common_text["Loading_Screen"])
         if result:
             self.clear_screen()
             self.common_text(primary_text=Text_File.common_text["Single_device"],primary_text_color="red", primary_text_style="bold")
@@ -45,6 +72,10 @@ class Connection_type_menu(Main_Menu,Authentication):
                         self.next_screen(connectiontype=connection)  # Passing Netmiko connection object
                     else:
                         self.common_text(secondary_text=Text_File.error_text["Device invalid"])
+            else:
+                 sys.exit(self.ExceptionTextFormatter(primary_text=Text_File.error_text["User_Auth_Data_error"],add_line_break=False))
+        else:
+            sys.exit(self.ExceptionTextFormatter(primary_text=Text_File.error_text["Error_in_script"],add_line_break=False))
 
     ##Method for multiple device connection
     @NetmikoException_Handler

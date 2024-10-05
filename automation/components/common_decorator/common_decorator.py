@@ -70,37 +70,19 @@ def NetmikoException_Handler(method: any):
 
 def Regular_Exception_Handler(method: any):
     """
-    A decorator for handling common exceptions that may occur during the execution 
-    of a wrapped method. 
+    A decorator to handle common exceptions in regular methods.
 
-    This decorator catches specific exceptions and processes them by calling a 
-    common text display method from the `Text_Style` class, passing relevant 
-    exception messages.
+    This decorator catches and handles various exceptions such as `ValueError`, `TypeError`, 
+    `ModuleNotFoundError`, `IOError`, `FileExistsError`, and `OSError`. When an exception is raised, 
+    it formats and displays an error message using `ExceptionTextFormatter()`. For most exceptions, 
+    it returns `False` to indicate failure, while for `IOError`, `FileExistsError`, and `OSError`, 
+    there is no specified return value.
 
     Args:
-        method (callable): The function to be decorated and wrapped with exception 
-                           handling logic.
+        method (function): The method to be wrapped and executed.
 
     Returns:
-        callable: The wrapper function that includes the exception handling logic.
-
-    Exceptions Handled:
-        - ValueError: Caught when a function receives an argument of the right type 
-          but inappropriate value.
-        - TypeError: Caught when an operation or function is applied to an object 
-          of inappropriate type.
-        - ModuleNotFoundError: Caught when an imported module cannot be found.
-
-    Usage:
-        @Regular_Exception_Handler
-        def my_function(arg):
-            # Function logic here
-            pass
-
-    Notes:
-        The decorator returns False if any of the specified exceptions are caught, 
-        which can be used by the calling code to determine if the function 
-        executed successfully.
+        function: The wrapped method with exception handling applied.
     """
     def wrapper(*args, **kwargs):
         try:
@@ -118,9 +100,25 @@ def Regular_Exception_Handler(method: any):
             Text_Style.ExceptionTextFormatter(primary_text=Text_File.exception_text["IOerror"],secondary_text=ioerror)
         except FileExistsError as filerror:
             Text_Style.ExceptionTextFormatter(primary_text=Text_File.exception_text["file_not_found"],secondary_text=filerror)
+        except OSError as oserror:
+            Text_Style.ExceptionTextFormatter(primary_text=Text_File.exception_text["os exception"],secondary_text=oserror,secondary_text_style="bold")
+
     return wrapper
 
 def ThreadPoolExeceptionHandler(method):
+    """
+    A decorator to handle common thread pool exceptions.
+
+    Catches and handles `CancelledError`, `TimeoutError`, `BrokenExecutor`, `ValueError`, 
+    and `IOError`, formatting and displaying error messages. Returns `False` for most 
+    exceptions, with no return for `IOError`.
+
+    Args:
+        method (function): The method to wrap and handle exceptions for.
+
+    Returns:
+        function: The wrapped method with exception handling.
+    """
     def wrapper(*args,**kwargs):
         try:
             return method(*args,**kwargs)
