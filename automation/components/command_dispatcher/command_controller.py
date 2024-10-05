@@ -1,20 +1,24 @@
 from assets.text_file import Text_File
 from assets.text_style import Text_Style
-from state.global_State_Manger import Global_State_Manager
+from state.global_State_Manger import Global_State_Manager          ##It is global statemanager and we will use if any requirement occur
 from concurrent.futures import ThreadPoolExecutor
 from components.common_decorator.common_decorator import Regular_Exception_Handler,ThreadPoolExeceptionHandler,NetmikoException_Handler
+from components.prompt_manager.prompt_manager import Prompt_Manager
 import time
+import sys
+import os
 
-class Command_Controller(Text_Style):
+class Command_Controller(Prompt_Manager):
     """
     Manages the execution of commands on Netmiko connections and handles device configuration backups.
 
     This class supports both single and multiple Netmiko connections, enabling command execution,
     concurrent processing with threading, and backup of device configurations to timestamped files.
     """
-    def __init__(self,netmiko_connection:str | list, commands: str | list) -> None:
+    def __init__(self,netmiko_connection:str | list) -> None:
         self.netmiko_connection = netmiko_connection
-        self.commands = commands
+        self.configuration = False              ## Used for making condition command is configuration command or basic command
+        self.commands = None
         self.device_backup = None           ##By default device_backup is empty
         self.backup_command = "show running-config"         ##Backup command
 
@@ -57,18 +61,30 @@ class Command_Controller(Text_Style):
         """
         final_result = " "              ##Final result for the multiple commands
         if isinstance(self.commands,str):
-            command_result = self.netmiko_connection.send_command(self.commands)
-            return command_result
+            command_result = self.netmiko_connection.send_config_set(self.command) if self.configuration else self.netmiko_connection.send_command(self.commands)
+            super().__init__(command,command_result)            ##passing value into super class
+            result = self.PromptNavigator()
+            if result:
+                self.common_text(primary_text=Text_File.common_text["Your command have been succesfully performed on the server"])
+                return command_result
+            else:
+                return False
+            
         elif isinstance(self.commands,list):
             for command in self.commands:
-                command_result = self.netmiko_connection.send_command(command)
-                final_result += command_result + "\n"
+                command_result = self.netmiko_connection.send_config_set(self.command) if self.configuration else self.netmiko_connection.send_command(self.commands)
+                result = super().__init__(command,command_result)
+                if result:
+                    final_result += command_result + "\n"
+                else:
+                    self.common_text(primary_text=Text_File.common_text["Your command is not being executed succesfully"],secondary_text=command)
+                    continue            ##skip and moving to the next command
             return final_result
         else:
             return False
         
     @Regular_Exception_Handler
-    def manage_connection_execution(self):
+    def manage_connection_execution(self,command:str | list,configuration_command: bool = False):              ##Main method which is calling all other method respectively
         """
         Manages the execution of commands based on the type of Netmiko connection.
 
@@ -78,21 +94,45 @@ class Command_Controller(Text_Style):
         Returns:
             list or bool: Command responses if successful, or False if execution fails.
         """
+        self.command = command                  ##Passing the command to the constructor method
+        self.configuration = configuration_command
+
         if isinstance(self.netmiko_connection,object):
-            print("Here we will call the backup device configuration before this so we can backup the device configuration before storing the data")
-            command_response = self.send_command()
-            if command_response:
-                return command_response
+            result = self.generate_config_backup()              ##This method is being used to backup the current configuration of device before making any changes
+            if result:
+                self.common_text(primary_text=Text_File.common_text["successful_backup"],primary_text_color="green")
             else:
-                return False
+                self.common_text(primary_text=Text_File.error_text["unsuccessful_backup"],primary_text_color="red")
+                continue_choice = input(primary_text=Text_File.common_text["Continue_without_backup"].strip().lower())
+                if continue_choice == "yes":
+                    command_response = self.send_command()
+                    if command_response:
+                        self.common_text(primary_text=Text_File.common_text["command_excuted"],primary_text_color="green") ##Just for testing purpose we will remove final program will being made
+                        return command_response
+                    else:
+                        self.common_text(primary_text=Text_File.common_text["error_command_excuted"],primary_text_color="red")
+                        return False
+                else:
+                     sys.exit(self.common_text(primary_text=Text_File.common_text["greeting_user"],primary_text_color="green",primary_text_style="italic",add_line_break=False))
+                    
             
         elif isinstance(self.netmiko_connection,list):
-            print("We will also call that method and method is being already created **************************")
-            command_response = self.execute_with_control()
-            if command_response:
-                return command_response
+            result = self.generate_config_backup()          ##This method is being used to backup the current configuration of device before making any changes
+            if result:
+                 self.common_text(primary_text=Text_File.common_text["successful_backup"],primary_text_color="green")
             else:
-                return False
+                 self.common_text(primary_text=Text_File.error_text["unsuccessful_backup"],primary_text_color="red")
+                 continue_choice = input(primary_text=Text_File.common_text["Continue_without_backup"].strip().lower())
+                 if continue_choice == "yes":
+                    command_response = self.execute_with_control()
+                    if command_response:
+                        self.common_text(primary_text=Text_File.common_text["command_excuted"],primary_text_color="green") ##Just for testing purpose we will remove final program will being made
+                        return command_response
+                    else:
+                        self.common_text(primary_text=Text_File.common_text["error_command_excuted"],primary_text_color="red")
+                        return False
+                 else:
+                    sys.exit(self.common_text(primary_text=Text_File.common_text["greeting_user"],primary_text_color="green",primary_text_style="italic",add_line_break=False))
     
     @Regular_Exception_Handler
     def write_backup_configuration(self):
@@ -105,9 +145,13 @@ class Command_Controller(Text_Style):
         Returns:
             bool: True if the file is created successfully, False otherwise.
         """
+        relative_path = "device_backup"
         timestr = time.strftime("%Y%m%d-%H%M%S")
-        final_final_name = f"Today Backup {timestr}"
-        with(final_final_name,"w") as file:
+        final_file_name = f"Backup_{timestr}.txt"
+        relative_path = f"device_backup/{final_file_name}"
+        absolute_path = os.path.abspath(relative_path)
+        os.makedirs(os.path.dirname(absolute_path), exist_ok=True)      ##This will check either absolute path is presented or not
+        with(absolute_path,"w") as file:
             if file.write(self.device_backup):
                 Text_Style.common_text(primary_text=Text_File.common_text["Successful_File_Creation"])
                 return True
@@ -173,6 +217,7 @@ class Command_Controller(Text_Style):
         else:
             return False            ##When above both method is not able to return anything.
 
+    
 
 
 

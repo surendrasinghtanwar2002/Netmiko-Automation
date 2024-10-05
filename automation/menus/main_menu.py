@@ -1,5 +1,4 @@
 import sys
-import shutil
 import os
 from time import time
 from assets.text_file import Text_File

@@ -116,6 +116,8 @@ def Regular_Exception_Handler(method: any):
             return False
         except IOError as ioerror:
             Text_Style.ExceptionTextFormatter(primary_text=Text_File.exception_text["IOerror"],secondary_text=ioerror)
+        except FileExistsError as filerror:
+            Text_Style.ExceptionTextFormatter(primary_text=Text_File.exception_text["file_not_found"],secondary_text=filerror)
     return wrapper
 
 def ThreadPoolExeceptionHandler(method):
