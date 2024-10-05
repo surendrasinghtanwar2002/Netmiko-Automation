@@ -6,8 +6,15 @@ class Show_Calendar:
         self.vlan_netmiko_connection = None
 
     def display(self):
+        user_choice = input("Enter your prompt here to continue the process:- ")
+        if  user_choice:
+            print("We are working well on this project")
         return f"This is your netmiko object here {self.vlan_netmiko_connection}"        
 
     def __call__(self, connection) -> Any:
-        print(connection)
-        return 10+20
+        self.vlan_netmiko_connection = connection
+        result = self.display()
+        if result:
+            return result
+        else:
+            return False
