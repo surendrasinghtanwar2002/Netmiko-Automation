@@ -116,7 +116,7 @@ class Text_File:
         "unsuccessful_backup":"Your backup file is not being created".center(shutil.get_terminal_size().columns,"!"),
         "unsuccesful_prompt":"We are not able to find any prompt",
         "unsuccesful_command_execution":"Command is not executed succesfully",
-        "Error_in_script":-"Script got crashed due to some technical issue",
+        "Error_in_script":"Script got crashed due to some technical issue",
         "User_Auth_Data_error":"Authenitcation data is not valid please try again"
     }
     ##debug text

@@ -74,6 +74,7 @@ class Script_Menu(Main_Menu):
     ##Overiding the main menu of the parent menus
     def display_main_menu(self,netmiko_type:object | list) -> None:
         try:
+            self.clear_screen()
             self.netmiko_connection = netmiko_type          ##passing the netmiko object to instance variable
             while True:
                 if isinstance(self.netmiko_connection,list):
